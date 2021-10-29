@@ -51,8 +51,6 @@ PACKAGES="
     zlib-devel
 "
 
-zypper ref && \
-	zypper --non-interactive dup --allow-vendor-change && \
-	zypper --non-interactive install $PACKAGES
-
-exit $?
+zypper ref
+zypper --non-interactive dup --allow-vendor-change
+zypper --non-interactive install $PACKAGES
