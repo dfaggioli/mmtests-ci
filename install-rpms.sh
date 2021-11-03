@@ -1,21 +1,18 @@
 #!/bin/bash
 #set -euo pipefail
 
-# TODO: Factor these out in a common script
-ZYPP="zypper --non-interactive --gpg-auto-import-keys"
-ZYPP_IN="$ZYPP install -l --force-resolution"
-ZYPP_REF="$ZYPP ref"
-ZYPP_DUP="$ZYPP dup"
-
-# Modify zypper configuration to allow Vendor changes:
-sed -i 's/# solver.allowVendorChange = false/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
+. common.sh
 
 # TODO: Do we want to handle installing from specific repo?
 #FROM="--from xxx" / "-r xxx"
 
+# Modify zypper configuration to allow Vendor changes
+if [ "$MMCI_REPO_ALLOW_VENDOR_CHANGE" = "yes" ]; then
+	sed -i 's/# solver.allowVendorChange = false/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
+fi
+
 # First of all, update everything
-$ZYPP_REF
-$ZYP_DUP
+$MMCI_PACKAGE_REFRESH && $MMCI_PACKAGES_UPDATE
 
 LIST_PKGS=0
 LIST_PTTRNS=0
@@ -36,10 +33,9 @@ while [ $# -gt 0 ]; do
 			shift
 			continue
 			;;
-		all)
-			if [ $LIST_PKGS -eq 1 ] || [ $LIST_PTTRNS -eq 1 ]; then PP_ALL=1 ; fi
-			shift
-			continue
+		all|base)
+			#if [ $LIST_PKGS -eq 1 ] || [ $LIST_PTTRNS -eq 1 ]; then PP_ALL=1 ; fi
+			break
 			;;
 		*)
 			PP=$1
@@ -54,36 +50,49 @@ while [ $# -gt 0 ]; do
 	fi
 done
 
-if [ ${PP_ALL} -eq 1 ]; then
+KVM_INSTALL_BASE="qemu-x86 tftp libvirt-daemon-qemu virt-install libvirt-client libvirt-daemon-config-network tigervnc virt-manager vm-install"
+if [ "$1" = "all" ]; then
 	if [ ${#PKGS[@]} -ne 0 ] || [ ${#PTTRNS[@]} -ne 0 ]; then
 		echo "ERROR: Do not mix 'all' with package names"
 		exit 1
 	fi
-	KVM_INSTALL_RPMS="all"
+	MMCI_INSTALL_PATTERNS="kvm_server kvm_tools"
+	MMCI_INSTALL_RPMS="virt-viewer"
+elif [ "$1" = "base" ]; then
+	if [ ${#PKGS[@]} -ne 0 ] || [ ${#PTTRNS[@]} -ne 0 ]; then
+		echo "ERROR: Do not mix 'base' with package names"
+		exit 1
+	fi
+	MMCI_INSTALL_RPMS="$KVM_INSTALL_BASE"
+else
+	if [ ${#PKGS[@]} -eq 1 ] && [ -f $PKGS ]; then
+		MMCI_INSTALL_RPMS=$(cat "$PKGS")
+	elif [ ${#PKGS[@]} -ge 1 ]; then
+		MMCI_INSTALL_RPMS="${PKGS[@]}"
+	fi
+	if [ ${#PTTRNS[@]} -eq 1 ] && [ -f $PTTRNS ]; then
+		MMCI_INSTALL_PATTERNS=$(cat "$PTTRNS")
+	elif [ ${#PTTRNS[@]} -ge 1 ]; then
+		MMCI_INSTALL_PATTERNS="${PTTRNS[@]}"
+	fi
 fi
 
-if [ ${#PKGS[@]} -eq 1 ] && [ -f $PKGS ]; then
-	KVM_INSTALL_RPMS=$(cat "$PKGS")
-elif [ ${#PKGS[@]} -ge 1 ]; then
-	KVM_INSTALL_RPMS="${PKGS[@]}"
+# By default, install the basics...
+[ -z "$MMCI_INSTALL_RPMS" ] && MMCI_INSTALL_RPMS="$KVM_INSTALL_BASE"
+
+if [ ! -z "$MMCI_INSTALL_PATTERNS" ]; then
+	$MMCI_PACKAGE_INSTALL $FROM -t pattern $MMCI_INSTALL_PATTERNS
+	if [ $? -ne 0 ]; then
+		echo "ERROR: failed installing patterns: $MMCI_INSTALL_PATTERNS"
+		exit 1
+	fi
 fi
-if [ ${#PTTRNS[@]} -eq 1 ] && [ -f $PTTRNS ]; then
-	KVM_INSTALL_PATTERNS=$(cat "$PTTRNS")
-elif [ ${#PTTRNS[@]} -ge 1 ]; then
-	KVM_INSTALL_PATTERNS="${PTTRNS[@]}"
+if [ ! -z "$MMCI_INSTALL_RPMS" ]; then
+	$MMCI_PACKAGE_INSTALL $FROM $MMCI_INSTALL_RPMS
+	if [ $? -ne 0 ]; then
+		echo "ERROR: failed installing packages: $MMCI_INSTALL_RPMS"
+		exit 1
+	fi
 fi
 
-# By default, just install everything!
-[ -z "$KVM_INSTALL_RPMS" ] && KVM_INSTALL_RPMS="all"
-
-if [ "$KVM_INSTALL_RPMS" = "all" ]; then
-	KVM_INSTALL_PATTERNS="kvm_server kvm_tools"
-	KVM_INSTALL_RPMS="virt-viewer"
-fi
-
-if [ ! -z "$KVM_INSTALL_PATTERNS" ]; then
-	$ZYPP_IN $FROM -t pattern $KVM_INSTALL_PATTERN
-fi
-if [ ! -z "$KVM_INSTALL_RPMS" ]; then
-	$ZYPP_IN $FROM $KVM_INSTALL_RPMS
-fi
+exit 0
