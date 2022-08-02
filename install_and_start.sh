@@ -15,7 +15,7 @@ cd $DIR
 curl -o $DIR https://raw.githubusercontent.com/dfaggioli/mmtests-ci/main/mmci_step.sh
 chmow +x mmci_step.sh
 
-cat > /etc/systemd/system/mmci.service <<EOF
+cat > ${DIR}/mmci.service <<EOF
 [Unit]
 Description=MMTests CI step script
 After=default.target
@@ -31,5 +31,7 @@ TimeoutStartSec=0
 WantedBy=default.target
 EOF
 
+cp ${DIR}/mmci.service /etc/systemd/system/
+systemctl daemon-reload
 # BEWARE: this will reboot the box and start the CI cycling!!!
 #systemctl enable --now mmci
