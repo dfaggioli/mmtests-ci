@@ -8,6 +8,7 @@ sleep 120
 echo DONE step1 $(date) >> ${DIR}/mmci_steps.log
 
 cp ${CWD}/step2.sh ${DIR}/mmci_next_step.sh
+chmod +x ${DIR}/mmci_next_step.sh
 reboot
 
 exit 0

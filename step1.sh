@@ -15,7 +15,8 @@ if [ ! -d "$CWD" ]; then
 	exit 255
 fi
 
-cp "${CWD}/step1.sh" "${DIR}/mmci_next_step.sh"
+cp -a "${CWD}/step1.sh" "${DIR}/mmci_next_step.sh"
+chmod +x "${DIR}/mmci_next_step.sh"
 reboot
 
 exit 0

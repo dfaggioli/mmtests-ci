@@ -14,7 +14,7 @@ while [ -f "$DIR/mmci_pause" ]; do
 	sleep 60
 done
 
-CWD="/$DIR/mmtests-ci"
+CWD="$DIR/mmtests-ci"
 if [ ! -d "$CWD" ]; then
 	# This is the very first time we run here!
 	# We need to clone the repo, xxx
@@ -24,7 +24,8 @@ fi
 if [ ! -f "$DIR/mmci_next_step.sh" ]; then
 	# Either it's the first time, or we lost
 	# track of where we were. Go back to first step.
-	cp "${CWD}/step1.sh" /root/mmci_next_step.sh
+	cp -a "${CWD}/step1.sh" "${DIR}/mmci_next_step.sh"
+	chmod +x "${DIR}/mmci_next_step.sh"
 	reboot
 	exit 0
 fi
