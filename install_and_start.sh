@@ -12,7 +12,7 @@ if [ ! -d $DIR ]; then
 fi
 
 cd $DIR
-curl -o $DIR https://raw.githubusercontent.com/dfaggioli/mmtests-ci/main/mmci_step.sh
+curl -o $DIR/mmci_step.sh https://raw.githubusercontent.com/dfaggioli/mmtests-ci/main/mmci_step.sh
 chmow +x mmci_step.sh
 
 cat > ${DIR}/mmci.service <<EOF
