@@ -24,16 +24,16 @@ read_configs
 
 # Some default values, used if we don't find them in the environment or
 # in the config file.
-[ -z $MMCI_PACKAGE_MANAGER ] && export MMTESTS_PACKAGE_MANAGER=zypper
-[ -z $MMCI_PACKAGE_MANAGER_CMD ] && export MMTESTS_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys"
-[ -z $MMCI_PACKAGE_INSTALL ] && export MMCI_PACKAGE_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
-[ -z $MMCI_PACKAGES_UPDATE ] && export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
+[ -z "$MMCI_PACKAGE_MANAGER" ] && export MMTESTS_PACKAGE_MANAGER=zypper
+[ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMTESTS_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys"
+[ -z "$MMCI_PACKAGE_INSTALL" ] && export MMCI_PACKAGE_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
+[ -z "$MMCI_PACKAGES_UPDATE" ] && export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
 
-[ -z $MMCI_MMTESTS_REPO ] && export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
-[ -z $MMCI_MMTESTS_BRANCH ] && export MMCI_MMTESTS_BRANCH=master
-[ -z $MMCI_MMTESTS_DIR ] && export MMCI_MMTESTS_DIR="~/mmtests"
+[ -z "$MMCI_MMTESTS_REPO" ] && export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
+[ -z "$MMCI_MMTESTS_BRANCH" ] && export MMCI_MMTESTS_BRANCH=master
+[ -z "$MMCI_MMTESTS_DIR" ] && export MMCI_MMTESTS_DIR="~/mmtests"
 
-[ -z $MMCI_REPO_ALLOW_VENDOR_CHANGE ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="yes"
+[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="yes"
 
 function get_os_name() {
 	local NAME=""

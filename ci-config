@@ -30,3 +30,19 @@ virt-devel@http://download.suse.de/ibs/Devel:/Virt:/SLE-12-SP5/SUSE_SLE-12-SP5_U
 export MMCI_MMTESTS_REPO=https://github.com/dfaggioli/mmtests.git
 export MMCI_MMTESTS_BRANCH=wip/bench-virt
 export MMCI_MMTESTS_DIR="./mmtests-test"
+
+# TODO: explain logic
+#export MMCI_RUN_ID=
+
+# TODO explain logic
+#export MMCI_TRIGGER_FILES_HASH="qemu-system-x86_64 libvirtd"
+#export MMCI_TRIGGER_CMDS_HASH="
+#uname_host@uname -a
+#"
+# TODO: explain logic
+#export MMCI_HOST_CONFIGS=
+#export MMCI_MMTESTS_CONFIGS=
+
+# XXX
+#export MMCI_RESULTS_HOST="./results"
+#export MMCI_LIST_RESULTS_CMD="ssh ..."
