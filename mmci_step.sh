@@ -1,6 +1,7 @@
 #!/bin/bash -x
 
 DIR="/root"
+CWD="$DIR/mmtests-ci"
 
 echo "MMCI Step: $(date)"
 
@@ -14,7 +15,6 @@ while [ -f "$DIR/mmci_pause" ]; do
 	sleep 60
 done
 
-CWD="$DIR/mmtests-ci"
 if [ ! -d "$CWD" ]; then
 	# This is the very first time we run here!
 	# We need to clone the repo, xxx

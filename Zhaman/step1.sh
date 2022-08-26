@@ -1,7 +1,9 @@
 #!/bin/bash -x
 
-DIR="/root"
-CWD="${DIR}/mmtests-ci/$(hostname -s)"
+export DIR="/root"
+export CWD="${DIR}/mmtests-ci/$(hostname -s)"
+
+. ${CWD}/../common.sh
 
 echo STARTING step1 $(date) >> ${DIR}/mmci_steps.log
 sleep 120

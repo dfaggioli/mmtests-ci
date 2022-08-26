@@ -8,14 +8,16 @@ fi
 
 # By default we read ./ci-config, unless MMCI_CONFIGS is defined.
 function read_configs() {
+	[ -z "$CWD" ] && CWD="/root/mmtests-ci/$(hostname -s)"
+	MMCI_CONFIGS="${CWD}/../ci-config ${CWD}/ci-config $MMCI_CONFIGS"
 	[ -z $MMCI_CONFIGS ] && MMCI_CONFIGS="ci-config"
 	for C in "$MMCI_CONFIGS"
 	do
 		if [ ! -e "$C" ]; then
-			echo "ERROR: config file $C not found"
-			exit 1
+			echo "WARNING: config file $C not found"
+		else
+			source "$C"
 		fi
-		source "$C"
 	done
 }
 
