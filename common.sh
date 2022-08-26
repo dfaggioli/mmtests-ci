@@ -1,16 +1,13 @@
 #!/bin/bash
 
-OS_RELEASE="/etc/os-release"
-if [ ! -f "$OS_RELEASE" ]; then
-	echo "ERROR: cannot find $OS_RELEASE"
-	exit 1
-fi
+[ -z "$DIR" ] && export DIR="/root"
+[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
+export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
 
 # By default we read ./ci-config, unless MMCI_CONFIGS is defined.
 function read_configs() {
-	[ -z "$CWD" ] && CWD="/root/mmtests-ci/$(hostname -s)"
-	MMCI_CONFIGS="${CWD}/../ci-config ${CWD}/ci-config $MMCI_CONFIGS"
-	[ -z $MMCI_CONFIGS ] && MMCI_CONFIGS="ci-config"
+	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config $MMCI_CONFIGS"
+	[ -z $MMCI_CONFIGS ] && MMCI_CONFIGS="./ci-config"
 	for C in "$MMCI_CONFIGS"
 	do
 		if [ ! -e "$C" ]; then
@@ -24,8 +21,7 @@ function read_configs() {
 # For all the scripts, we want to import the configuration files.
 read_configs
 
-# Some default values, used if we don't find them in the environment or
-# in the config file.
+# Some default values, used if we don't find them in the environment or in the config files.
 [ -z "$MMCI_PACKAGE_MANAGER" ] && export MMTESTS_PACKAGE_MANAGER=zypper
 [ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMTESTS_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys"
 [ -z "$MMCI_PACKAGE_INSTALL" ] && export MMCI_PACKAGE_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
@@ -36,6 +32,19 @@ read_configs
 [ -z "$MMCI_MMTESTS_DIR" ] && export MMCI_MMTESTS_DIR="~/mmtests"
 
 [ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="yes"
+
+[ -z "$MMCI_LOGDIR" ] && export MMCI_LOGDIR="${MMCI_DIR}/logs"
+mkdir -p "$MMCI_LOGDIR"
+
+function log() {
+	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
+}
+
+OS_RELEASE="/etc/os-release"
+if [ ! -f "$OS_RELEASE" ]; then
+	echo "ERROR: cannot find $OS_RELEASE"
+	exit 1
+fi
 
 function get_os_name() {
 	local NAME=""

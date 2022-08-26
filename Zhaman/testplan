@@ -1,0 +1,7 @@
+START
+setups/official_rpms_setup.sh
+tests/bla1
+tests/bla2
+setups/repo_rpms_setup.sh
+tests/bla3
+END
