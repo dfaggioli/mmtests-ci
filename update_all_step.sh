@@ -10,8 +10,8 @@ log "STARTING $(realpath $0)"
 
 # Make sure the repo is always updated
 cd $MMCI_DIR || exit 255
-#git pull . origin/main # FIXME: Handle failure
-git pull
+git checkout main || exit 255 # FIXME: Handle failure better
+git pull origin main # FIXME: Handle failure (at all!)
 
 # TODO: Update the OS?
 
