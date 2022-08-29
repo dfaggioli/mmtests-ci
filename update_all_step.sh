@@ -6,7 +6,7 @@ export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
 
 . "${MMCI_DIR}/common.sh"
 
-log "STARTING $(realpath $0)"
+log "STARTING update_all_step.sh"
 
 # Make sure the repo is always updated
 cd $MMCI_DIR || exit 255
@@ -15,7 +15,7 @@ git pull origin main # FIXME: Handle failure (at all!)
 
 # TODO: Update the OS?
 
-log "DONE $(realpath $0)"
+log "DONE update_all_step.sh"
 
 # Start host-specific tests, if any
 if [ ! -d "$MMCI_HOSTDIR" ] || [ ! -f "${MMCI_HOSTDIR}/testplan" ]; then

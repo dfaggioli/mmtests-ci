@@ -5,7 +5,7 @@
 
 . "${MMCI_DIR}/common.sh"
 
-log "STARTING $(realpath $0)"
+log "STARTING reboot_to_next_os_step.sh"
 
 # Here we want to tweak GRUB (or whatever) to make sure that we will boot in
 # the "next" OS that we want to test on this host (if any, of course)!
@@ -18,7 +18,7 @@ log "STARTING $(realpath $0)"
 
 sleep 30
 
-log "DONE $(realpath $0)"
+log "DONE reboot_to_next_os_step.sh"
 
 cp -a "${MMCI_DIR}/update_all_step.sh" "${DIR}/mmci_next_step.sh"
 reboot

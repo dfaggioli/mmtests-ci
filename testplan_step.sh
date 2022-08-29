@@ -9,12 +9,13 @@ export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
 # TODO: parametrize this
 RESULTS="${DIR}/mmci-results/"
 
-log "STARTING $(realpath $0)"
+log "STARTING testplan_step.sh"
 
 L=0
 LASTLINE=$(cat ${MMCI_HOSTDIR}/testplan.step 2> /dev/null || echo "0")
 while read -r -u 3 LINE; do
 	L=$(($L + 1))
+	echo "XXX $L $LINE $LASTLINE"
 	[ "$LINE" == "START" ] && continue
 	[ "$LINE" ~= "^#.*" ] && continue
 	[ $L -le $LASTLINE ] && continue
@@ -39,10 +40,10 @@ while read -r -u 3 LINE; do
 		fi
 	fi
 	echo $L > ${MMCI_HOSTDIR}/testplan.step
-	break
+	breakL
 done 3< ${MMCI_HOSTDIR}/testplan
 
-log "DONE $(realpath $0)"
+log "DONE testplan_step.sh"
 
 # FIXME: We're probably rebooting one time more than we could
 if [ "$LINE" == "END" ]; then
