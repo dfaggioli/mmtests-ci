@@ -25,7 +25,7 @@ while read -r -u 3 LINE; do
 	fi
 	read -r -u 3 LINE
 	L=$(($L + 1))
-	if [ -f "${MMCI_DIR}/${LINE}" ]; then
+	if [ ! -f "${MMCI_DIR}/${LINE}" ]; then
 		log "WARNING: script ${MMCI_DIR}/${LINE} is missing. Trying to continue..."
 	else
 		log "RUNNING $LINE"
