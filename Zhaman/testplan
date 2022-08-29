@@ -9,6 +9,6 @@ tests/multi-vm.sh
 setups/repo_rpms_cleanup.sh
 TEST qemu-git-latest
 setups/upstream_qemu_setup.sh
-tests/bla5
-tests/bla6
+tests/single-vm.sh
+tests/multi-vm.sh
 END
