@@ -17,10 +17,11 @@ while read -r -u 3 LINE; do
 	L=$(($L + 1))
 	echo "XXX $L $LINE $LASTLINE"
 	[ "$LINE" == "START" ] && continue
-	[ "$LINE" ~= "^#.*" ] && continue
+	[[ "$LINE" =~ "^#.*" ]] && continue
 	[ $L -le $LASTLINE ] && continue
 	[ "$LINE" == "END" ] && break
-	if [ "$LINE" ~= "^TEST.*" ]; then
+	if [[ "$LINE" =~ "^TEST.*" ]]; then
+		# FIXME: Use BASH_REMATCH https://stackoverflow.com/questions/17420994/how-can-i-match-a-string-with-a-regex-in-bash
 		TESTNAME=$(echo "$LINE" | cut -f2 -d' ')
 		#read -r -u 3 LINE
 	fi
@@ -36,11 +37,11 @@ while read -r -u 3 LINE; do
 			# test, or something did not work. In any case, let's
 			# jump to the next one
 			LL=$(($L + 1))
-			L=$(cat -n Zhaman/testplan |tail -n +${LL}|grep -B1 -m1 setups|head -1|cut -f1|xargs)
+			L=$(cat -n ${MMCI_HOSTDIR}/testplan |tail -n +${LL}|grep -B1 -m1 setups|head -1|cut -f1|xargs)
 		fi
 	fi
 	echo $L > ${MMCI_HOSTDIR}/testplan.step
-	breakL
+	break
 done 3< ${MMCI_HOSTDIR}/testplan
 
 log "DONE testplan_step.sh"
