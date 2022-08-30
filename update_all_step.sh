@@ -27,7 +27,7 @@ fi
 
 # Update the OS, hopefully in the proper way
 log " Updating the OS"
-$MMCI_PACKAGE_REFRESH || exit 255
+$MMCI_PACKAGES_REFRESH || exit 255
 $MMCI_PACKAGES_UPDATE || exit 255
 
 log "DONE update_all_step.sh"

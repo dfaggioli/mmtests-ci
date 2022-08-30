@@ -69,17 +69,19 @@ function read_configs() {
 read_configs
 
 # Some default values, used if we don't find them in the environment or in the config files.
-[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="no"
-[ "$MMCI_REPO_ALLOW_VENDOR_CHANGE"  == "yes" ] && VENDOR_CHANGE="--allow-vendor-change"
-
 [ -z "$MMCI_PACKAGE_MANAGER" ] && export MMTESTS_PACKAGE_MANAGER=zypper
-[ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMTESTS_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys $VENDOR_CHANGE"
-[ -z "$MMCI_PACKAGES_INSTALL" ] && export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
-if [ -z "$MMCI_PACKAGES_UPDATE" ]; then
-	if [[ "$MMCI_OS_ID" =~ .*tumbleweed.* ]]; then
-		export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
-	else
-		export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD up"
+if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
+	[ -z "$MMCI_PACKAGES_REFRESH" ] && export MMCI_PACKAGES_REFRESH="$MMCI_PACKAGE_MANAGER ref"
+	[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="no"
+	[ "$MMCI_REPO_ALLOW_VENDOR_CHANGE"  == "yes" ] && VENDOR_CHANGE="--allow-vendor-change"
+	[ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMCI_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys $VENDOR_CHANGE"
+	[ -z "$MMCI_PACKAGES_INSTALL" ] && export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
+	if [ -z "$MMCI_PACKAGES_UPDATE" ]; then
+		if [[ "$MMCI_OS_ID" =~ .*tumbleweed.* ]]; then
+			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
+		else
+			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD up"
+		fi
 	fi
 fi
 

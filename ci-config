@@ -1,7 +1,7 @@
 #
 #export MMCI_PACKAGE_MANAGER=zypper
 #export MMCI_PACKAGE_MANAGER_CMD="zypper --non-interactive --gpg-auto-import-keys"
-#export MMCI_PACKAGE_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
+#export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
 #export MMCI_PACKAGES_REFRESH="$MMCI_PACKAGE_MANAGER ref"
 #export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
 #
@@ -11,6 +11,7 @@
 export Tumbleweed_REPOS="
 repo-oss@http://download.opensuse.org/tumbleweed/repo/oss/
 repo-update@http://download.opensuse.org/update/tumbleweed/
+repo-non-oss@http://download.opensuse.org/tumbleweed/repo/non-oss/
 virt-devel@https://download.opensuse.org/repositories/Virtualization/openSUSE_Tumbleweed/
 "
 
