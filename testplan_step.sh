@@ -9,6 +9,9 @@ export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
 # TODO: parametrize this
 RESULTS="${DIR}/mmci-results/"
 
+log "STARTING testplan_step.sh (in 60secs)"
+sleep 60
+
 log "STARTING testplan_step.sh"
 
 L=0
@@ -16,16 +19,17 @@ LASTLINE=$(cat ${MMCI_HOSTDIR}/testplan.step 2> /dev/null || echo "0")
 while read -r -u 3 LINE; do
 	L=$(($L + 1))
 	echo "XXX $L $LINE $LASTLINE"
-	[ "$LINE" == "START" ] && continue
-	[[ "$LINE" =~ "^#.*" ]] && continue
-	[ $L -le $LASTLINE ] && continue
 	[ "$LINE" == "END" ] && break
-	if [[ "$LINE" =~ "^TEST.*" ]]; then
+	[ "$LINE" == "START" ] && continue
+	[[ "$LINE" =~ ^#.* ]] && continue
+	if [[ "$LINE" =~ ^TEST.* ]]; then
 		# FIXME: Use BASH_REMATCH https://stackoverflow.com/questions/17420994/how-can-i-match-a-string-with-a-regex-in-bash
 		TESTNAME=$(echo "$LINE" | cut -f2 -d' ')
+		# TODO: Write TESTNAME to file, e.g., for saving results properly
+		read -r -u 3 LINE
+		L=$(($L + 1))
 	fi
-	read -r -u 3 LINE
-	L=$(($L + 1))
+	[ $L -le $LASTLINE ] && continue
 	if [ ! -f "${MMCI_DIR}/${LINE}" ]; then
 		log "WARNING: script ${MMCI_DIR}/${LINE} is missing. Trying to continue..."
 	else
@@ -47,7 +51,7 @@ log "DONE testplan_step.sh"
 
 # FIXME: We're probably rebooting one time more than we could
 if [ "$LINE" == "END" ]; then
-	rm ${MMCI_HOSTDIR}/testplan.step
+	rm -f ${MMCI_HOSTDIR}/testplan.step
 	exec "${MMCI_DIR}/reboot_to_next_os_step.sh" "${DIR}/mmci_next_step.sh"
 else
 	cp -a "${MMCI_DIR}/testplan_step.sh" "${DIR}/mmci_next_step.sh"

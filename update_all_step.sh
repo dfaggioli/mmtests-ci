@@ -23,7 +23,7 @@ if [ ! -d "$MMCI_HOSTDIR" ] || [ ! -f "${MMCI_HOSTDIR}/testplan" ]; then
 	exec "${MMCI_DIR}/reboot_to_next_os_step.sh"
 fi
 
-rm ${MMCI_HOSTDIR}/testplan.step # Just in case...
+rm -f ${MMCI_HOSTDIR}/testplan.step # Just in case...
 cp -a "${MMCI_DIR}/testplan_step.sh" "${DIR}/mmci_next_step.sh"
 reboot
 exit 0
