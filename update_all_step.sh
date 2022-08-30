@@ -27,6 +27,10 @@ fi
 
 # Update the OS, hopefully in the proper way
 log " Updating the OS"
+# If PackageKit is there (which hopefully isn't the case) get rid of it
+# TODO: Find a better way to do this!
+systemctl disable --now packagekit
+killall -9 packagekitd
 $MMCI_PACKAGES_REFRESH || exit 255
 $MMCI_PACKAGES_UPDATE || exit 255
 
