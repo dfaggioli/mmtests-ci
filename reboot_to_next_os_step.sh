@@ -1,9 +1,8 @@
 #!/bin/bash -x
 
-[ -z "$DIR" ] && export DIR="/root"
-[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
-
-. "${MMCI_DIR}/common.sh"
+#[ -z "$DIR" ] && export DIR="/root"
+#[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
+#. "${MMCI_DIR}/common.sh"
 
 log "STARTING reboot_to_next_os_step.sh"
 

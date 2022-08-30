@@ -39,6 +39,7 @@ mkdir -p "$MMCI_LOGDIR"
 function log() {
 	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
 }
+export -f log
 
 OS_RELEASE="/etc/os-release"
 if [ ! -f "$OS_RELEASE" ]; then
@@ -78,8 +79,8 @@ function get_os_release() {
 	#	VERSION="$(cat $OS_RELEASE | grep ^VERSION | cut -f2 -d'=')"
 	#fi
 	if [ -z "$MMCI_OS_VERSION" ]; then
-		VERSION="$(cat $OS_RELEASE | grep ^VERSION= | cut -f2 -d'=')"
-		VERSION_ID="$(cat $OS_RELEASE | grep ^VERSION_ID | cut -f2 -d'=')"
+		VERSION="$(cat $OS_RELEASE | grep VERSION= | cut -f2 -d'=')"
+		VERSION_ID="$(cat $OS_RELEASE | grep ^VERSION_ID= | cut -f2 -d'=')"
 		export MMCI_OS_VERSION="$VERSION"
 		export MMCI_OS_VERSION_ID="$VERSION_ID"
 	fi

@@ -1,10 +1,9 @@
 #!/bin/bash -x
 
-[ -z "$DIR" ] && export DIR="/root"
-[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
-export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
-
-. "${MMCI_DIR}/common.sh"
+#[ -z "$DIR" ] && export DIR="/root"
+#[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
+#export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
+#. "${MMCI_DIR}/common.sh"
 
 log "STARTING update_all_step.sh"
 
