@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 #set -euo pipefail
 
 # Write an update string into the job_running file.

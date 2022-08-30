@@ -69,7 +69,7 @@ function read_configs() {
 read_configs
 
 # Some default values, used if we don't find them in the environment or in the config files.
-[ -z "$MMCI_PACKAGE_MANAGER" ] && export MMTESTS_PACKAGE_MANAGER=zypper
+[ -z "$MMCI_PACKAGE_MANAGER" ] && export MMCI_PACKAGE_MANAGER=zypper
 if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
 	[ -z "$MMCI_PACKAGES_REFRESH" ] && export MMCI_PACKAGES_REFRESH="$MMCI_PACKAGE_MANAGER ref"
 	[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="no"
