@@ -2,7 +2,9 @@
 
 [ -z "$DIR" ] && export DIR="/root"
 [ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
-. "${MMCI_DIR}/common.sh"
+if [ -d "${MMCI_DIR}" ]
+	. "${MMCI_DIR}/common.sh" || exit 255
+fi
 
 TERM_FILE="${DIR}/mmci_term"
 PAUSE_FILE="${DIR}/mmci_pause"
