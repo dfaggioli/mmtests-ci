@@ -4,43 +4,6 @@
 [ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
 export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
 
-# By default we read ./ci-config, unless MMCI_CONFIGS is defined.
-function read_configs() {
-	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config $MMCI_CONFIGS"
-	[ "$MMCI_CONFIGS" == "" ] && MMCI_CONFIGS="./ci-config"
-	for C in "$MMCI_CONFIGS"
-	do
-		if [ ! -e "$C" ]; then
-			echo "WARNING: config file $C not found"
-		else
-			source "$C"
-		fi
-	done
-}
-
-# For all the scripts, we want to import the configuration files.
-read_configs
-
-# Some default values, used if we don't find them in the environment or in the config files.
-[ -z "$MMCI_PACKAGE_MANAGER" ] && export MMTESTS_PACKAGE_MANAGER=zypper
-[ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMTESTS_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys"
-[ -z "$MMCI_PACKAGE_INSTALL" ] && export MMCI_PACKAGE_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
-[ -z "$MMCI_PACKAGES_UPDATE" ] && export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
-
-[ -z "$MMCI_MMTESTS_REPO" ] && export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
-[ -z "$MMCI_MMTESTS_BRANCH" ] && export MMCI_MMTESTS_BRANCH=master
-[ -z "$MMCI_MMTESTS_DIR" ] && export MMCI_MMTESTS_DIR="~/mmtests"
-
-[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="yes"
-
-[ -z "$MMCI_LOGDIR" ] && export MMCI_LOGDIR="${MMCI_DIR}/logs"
-mkdir -p "$MMCI_LOGDIR"
-
-function log() {
-	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
-}
-export -f log
-
 OS_RELEASE="/etc/os-release"
 if [ ! -f "$OS_RELEASE" ]; then
 	echo "ERROR: cannot find $OS_RELEASE"
@@ -87,3 +50,50 @@ function get_os_release() {
 }
 
 get_os_release
+
+# By default we read ./ci-config, unless MMCI_CONFIGS is defined.
+function read_configs() {
+	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config $MMCI_CONFIGS"
+	[ "$MMCI_CONFIGS" == "" ] && MMCI_CONFIGS="./ci-config"
+	for C in "$MMCI_CONFIGS"
+	do
+		if [ ! -e "$C" ]; then
+			echo "WARNING: config file $C not found"
+		else
+			source "$C"
+		fi
+	done
+}
+
+# For all the scripts, we want to import the configuration files.
+read_configs
+
+# Some default values, used if we don't find them in the environment or in the config files.
+[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="no"
+[ "$MMCI_REPO_ALLOW_VENDOR_CHANGE"  == "yes" ] && VENDOR_CHANGE="--allow-vendor-change"
+
+[ -z "$MMCI_PACKAGE_MANAGER" ] && export MMTESTS_PACKAGE_MANAGER=zypper
+[ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMTESTS_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys $VENDOR_CHANGE"
+[ -z "$MMCI_PACKAGES_INSTALL" ] && export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
+if [ -z "$MMCI_PACKAGES_UPDATE" ]; then
+	if [[ "$MMCI_OS_ID" =~ .*tumbleweed.* ]]; then
+		export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
+	else
+		export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD up"
+	fi
+fi
+
+[ -z "$MMCI_MMTESTS_REPO" ] && export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
+[ -z "$MMCI_MMTESTS_BRANCH" ] && export MMCI_MMTESTS_BRANCH=master
+[ -z "$MMCI_MMTESTS_DIR" ] && export MMCI_MMTESTS_DIR="${DIR}/mmtests"
+
+[ -z "$MMCI_LOGDIR" ] && export MMCI_LOGDIR="${DIR}/mmci_logs"
+mkdir -p "$MMCI_LOGDIR"
+
+[ -z "$MMCI_RESULTS_DIR" ] && export MMCI_RESULTS_DIR="${DIR}/mmci_results"
+mkdir -p "$MMCI_RESULTS_DIR"
+
+function log() {
+	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
+}
+export -f log
