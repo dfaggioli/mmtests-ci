@@ -53,19 +53,36 @@ function get_os_name() {
 	export MMCI_OS_NAME="$NAME"
 }
 
-function get_os_version() {
+function get_os_id() {
+	local ID=""
+
+	ID="$(cat $OS_RELEASE | grep ^ID= | cut -f2 -d'=')"
+	export MMCI_OS_ID="$ID"
+}
+
+function get_os_release() {
 	local VERSION=""
+	local VERSION_ID=""
 
 	if [ -z "$MMCI_OS_NAME" ]; then
 		get_os_name
 	fi
 
-	if [[ "$MMCI_OS_NAME" =~ "SLES$" ]]; then
-		VERSION="$(cat $OS_RELEASE | grep ^VERSION)"
-	elif [[ "$MMCI_OS_NAME" =~ ".*Tumbleweed" ]]; then
-		VERSION="$(cat $OS_RELEASE | grep ^VERSION | cut -f2 -d'=')"
+	if [ -z "$MMCI_OS_ID" ]; then
+		get_os_id
 	fi
-	export MMCI_OS_VERSION="$VERSION"
+
+	#if [[ "$MMCI_OS_NAME" == "SLES" ]]; then
+	#	VERSION="$(cat $OS_RELEASE | grep ^VERSION=)"
+	#elif [[ "$MMCI_OS_NAME" =~ .*Tumbleweed ]]; then
+	#	VERSION="$(cat $OS_RELEASE | grep ^VERSION | cut -f2 -d'=')"
+	#fi
+	if [ -z "$MMCI_OS_VERSION" ]; then
+		VERSION="$(cat $OS_RELEASE | grep ^VERSION= | cut -f2 -d'=')"
+		VERSION_ID="$(cat $OS_RELEASE | grep ^VERSION_ID | cut -f2 -d'=')"
+		export MMCI_OS_VERSION="$VERSION"
+		export MMCI_OS_VERSION_ID="$VERSION_ID"
+	fi
 }
 
-get_os_version
+get_os_release

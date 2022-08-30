@@ -1,10 +1,10 @@
 #!/bin/bash -x
 
-[ -z "$DIR" ] && export DIR="/root"
-[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
-export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
-
-. "${MMCI_DIR}/common.sh"
+#[ -z "$DIR" ] && export DIR="/root"
+#[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
+#export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
+#
+#. "${MMCI_DIR}/common.sh"
 
 # TODO: parametrize this
 RESULTS="${DIR}/mmci-results/"
@@ -17,8 +17,8 @@ log "STARTING testplan_step.sh"
 L=0
 LASTLINE=$(cat ${MMCI_HOSTDIR}/testplan.step 2> /dev/null || echo "0")
 while read -r -u 3 LINE; do
+	echo "XXX $MMCI_OS_ID $MMCI_OS_VERSION_ID"
 	L=$(($L + 1))
-	echo "XXX $L $LINE $LASTLINE"
 	[ "$LINE" == "END" ] && break
 	[ "$LINE" == "START" ] && continue
 	[[ "$LINE" =~ ^#.* ]] && continue
