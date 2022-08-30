@@ -35,7 +35,7 @@ systemctl disable --now packagekit
 systemctl disable --now packagekit-offline-update
 systemctl disable --now packagekit-background.service
 systemctl disable --now packagekit-background.timer
-$MMCI_PACKAGES_REFRESH || exit 255
+$MMCI_PACKAGES_REFRESH # FIXME: Don't fail on failed ref... for now || exit 255
 $MMCI_PACKAGES_UPDATE || exit 255
 
 log "DONE update_all_step.sh"
