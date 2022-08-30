@@ -5,6 +5,7 @@ tests/single-vm.sh
 TEST devel-virt-rpms
 setups/repo_rpms_setup.sh Virtualization
 tests/single-vm.sh
+tests/non-existing-test.sh
 tests/multi-vm.sh
 setups/repo_rpms_cleanup.sh
 TEST qemu-git-latest

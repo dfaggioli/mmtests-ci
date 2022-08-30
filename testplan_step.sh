@@ -23,7 +23,6 @@ while read -r -u 3 LINE; do
 	if [[ "$LINE" =~ "^TEST.*" ]]; then
 		# FIXME: Use BASH_REMATCH https://stackoverflow.com/questions/17420994/how-can-i-match-a-string-with-a-regex-in-bash
 		TESTNAME=$(echo "$LINE" | cut -f2 -d' ')
-		#read -r -u 3 LINE
 	fi
 	read -r -u 3 LINE
 	L=$(($L + 1))
