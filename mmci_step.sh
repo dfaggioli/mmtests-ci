@@ -2,7 +2,7 @@
 
 [ -z "$DIR" ] && export DIR="/root"
 [ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
-if [ -d "${MMCI_DIR}" ]
+if [ -d "${MMCI_DIR}" ]; then
 	. "${MMCI_DIR}/common.sh" || exit 255
 fi
 
