@@ -75,12 +75,12 @@ if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
 	[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="no"
 	[ "$MMCI_REPO_ALLOW_VENDOR_CHANGE"  == "yes" ] && VENDOR_CHANGE="--allow-vendor-change"
 	[ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMCI_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys $VENDOR_CHANGE"
-	[ -z "$MMCI_PACKAGES_INSTALL" ] && export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
+	[ -z "$MMCI_PACKAGES_INSTALL" ] && export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution --allow-downgrade"
 	if [ -z "$MMCI_PACKAGES_UPDATE" ]; then
 		if [[ "$MMCI_OS_ID" =~ .*tumbleweed.* ]]; then
-			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
+			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup --allow-downgrade"
 		else
-			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD up"
+			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD up --allow-downgrade"
 		fi
 	fi
 fi
