@@ -53,9 +53,9 @@ get_os_release
 
 # By default we read ./ci-config, unless MMCI_CONFIGS is defined.
 function read_configs() {
-	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config $MMCI_CONFIGS"
-	[ "$MMCI_CONFIGS" == "" ] && MMCI_CONFIGS="./ci-config"
-	for C in "$MMCI_CONFIGS"
+	# FIXME: Turn this list of paths into something that makes sense!
+	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config ./ci-config $MMCI_CONFIGS"
+	for C in $MMCI_CONFIGS
 	do
 		if [ ! -e "$C" ]; then
 			echo "WARNING: config file $C not found"
