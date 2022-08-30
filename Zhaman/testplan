@@ -7,6 +7,7 @@ setups/repo_rpms_setup.sh Virtualization
 tests/single-vm.sh
 tests/non-existing-test.sh
 tests/multi-vm.sh
+# Cleanup is actually a bit tricky... Let's see
 setups/repo_rpms_cleanup.sh
 TEST qemu-git-latest
 setups/upstream_qemu_setup.sh

@@ -25,12 +25,11 @@ while read -r -u 3 LINE; do
 	if [[ "$LINE" =~ ^TEST.* ]]; then
 		# FIXME: Use BASH_REMATCH https://stackoverflow.com/questions/17420994/how-can-i-match-a-string-with-a-regex-in-bash
 		TESTNAME=$(echo "$LINE" | cut -f2 -d' ')
-		# TODO: Write TESTNAME to file, e.g., for saving results properly
-		read -r -u 3 LINE
-		L=$(($L + 1))
+		#" TODO: Do we need to write TESTNAME to file, e.g., for saving results properly?
+		continue
 	fi
 	[ $L -le $LASTLINE ] && continue
-	if [ ! -f "${MMCI_DIR}/${LINE}" ]; then
+	if [ ! -f "$(echo ${MMCI_DIR}/${LINE} | awk '{print $1;}')" ]; then
 		log "WARNING: script ${MMCI_DIR}/${LINE} is missing. Trying to continue..."
 	else
 		log "RUNNING $LINE"
@@ -45,6 +44,7 @@ while read -r -u 3 LINE; do
 	fi
 	echo $L > ${MMCI_HOSTDIR}/testplan.step
 	break
+# FIXME: We probably can get rid of the file descr. logic
 done 3< ${MMCI_HOSTDIR}/testplan
 
 log "DONE testplan_step.sh"
