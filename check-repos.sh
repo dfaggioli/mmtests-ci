@@ -25,20 +25,25 @@ if [ -z "$MMCI_OS_NAME" ]; then
 	get_os_version
 fi
 
-if grep -q "Tumbleweed" <<< "$MMCI_OS_NAME" ; then
-	REPOS=$Tumbleweed_REPOS
-elif grep -q "SLES" <<< "$MMCI_OS_NAME" ; then
-	VERSION=$(echo $MMCI_OS_VERSION | tr -d '-')
-	eval "REPOS=\$${MMCI_OS_NAME}${VERSION}"
-fi
-if [ -z "$REPOS" ]; then
-	echo "WARNING: not configuring/checking any special repository"
-	$MMCI_PACKAGE_REFRESH
-	exit 0
-fi
+TMP_REPO_LIST=$(mktemp ./repo-list-XXXX)
+zypper lr -p -u | grep ^[0-9]* | tr -d ' ' > "$TMP_REPO_LIST"
 
-TMP_RP_LST=$(mktemp ./repo-list-XXXX)
-zypper lr -p -u | grep ^[0-9]* | tr -d ' ' > "$TMP_RP_LST"
+cat $TMP_REPO_LIST
+
+for R in $REPOS ; do
+	RALIAS=$(echo $R | awk -F '@' '{print $1}')
+	RURI=$(echo $R | awk -F '@' '{print $2}')
+	RCHECK=$(echo "$RURI" | sed 's/\./\\./g' | sed 's/\//\\\//g')
+
+	while read -r RL ; do
+		get_repo_data "$RL"
+		if echo $RL | grep -E "${RCHECK}(\/){0,}(\?.*){0,}$" ; then
+			echo si
+			exit
+		fi
+	done < $TMP_REPO_LIST
+done
+exit
 
 for R in $REPOS
 do

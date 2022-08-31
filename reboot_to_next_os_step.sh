@@ -6,6 +6,17 @@
 
 log "STARTING reboot_to_next_os_step.sh"
 
+log " Reinstate original repositories configuration"
+if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
+	if [ -d "${MMCI_HOSTDIR}/repos.d-backup" ]; then
+		rm -rf /etc/zypp/repod.d
+		mv "${MMCI_HOSTDIR}/repos.d-backup" /etc/zypp/repos.d
+	fi
+else
+	log "WARNING: Only zypper based-distros are currently supported"
+fi
+update_OS
+
 # Here we want to tweak GRUB (or whatever) to make sure that we will boot in
 # the "next" OS that we want to test on this host (if any, of course)!
 #

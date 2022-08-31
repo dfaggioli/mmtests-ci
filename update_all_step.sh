@@ -25,18 +25,7 @@ else
 	popd
 fi
 
-# Update the OS, hopefully in the proper way
-log " Updating the OS"
-# If PackageKit is there (which hopefully isn't the case) get rid of it
-# TODO: Find a better way to do this!
-killall -9 gnome-software
-killall -9 packagekitd
-systemctl disable --now packagekit
-systemctl disable --now packagekit-offline-update
-systemctl disable --now packagekit-background.service
-systemctl disable --now packagekit-background.timer
-$MMCI_PACKAGES_REFRESH # FIXME: Don't fail on failed ref... for now || exit 255
-$MMCI_PACKAGES_UPDATE || exit 255
+# TODO: Shall we update the OS here? Or just leave it to the testplan?
 
 log "DONE update_all_step.sh"
 

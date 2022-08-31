@@ -7,23 +7,8 @@
 #
 #export MMCI_INSTALL_RPMS="git qemu-x86 tftp libvirt-daemon-qemu virt-install libvirt-client libvirt-daemon-config-network tigervnc virt-manager vm-install"
 
-# TODO: syntax alias@ULR-regexp
-export Tumbleweed_REPOS="
-repo-oss@http://download.opensuse.org/tumbleweed/repo/oss/
-repo-update@http://download.opensuse.org/update/tumbleweed/
-repo-non-oss@http://download.opensuse.org/tumbleweed/repo/non-oss/
-virt-devel@https://download.opensuse.org/repositories/Virtualization/openSUSE_Tumbleweed/
-"
-
-# TODO: Move to internal?
-export SLES15SP2_REPOS="
-server-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SERVER/12-SP5/x86_64/product
-server-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SERVER/12-SP5/x86_64/update
-sdk-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SDK/12-SP5/x86_64/product
-sdk-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SDK/12-SP5/x86_64/update
-virt-devel@http://download.suse.de/ibs/Devel:/Virt:/SLE-12-SP5/SUSE_SLE-12-SP5_Update_standard
-"
-
+# TODO: Repos
+#
 # XXX
 #export MMCI_REPO_ALLOW_VENDOR_CHANGE="yes"
 
