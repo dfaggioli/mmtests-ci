@@ -157,6 +157,7 @@ function kill_packagekit() {
 	systemctl disable --now packagekit-background.service
 	systemctl disable --now packagekit-background.timer
 }
+export -f kill_packagekit
 
 function set_default_repos() {
 	kill_packagekit
