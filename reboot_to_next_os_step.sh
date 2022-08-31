@@ -9,7 +9,7 @@ log "STARTING reboot_to_next_os_step.sh"
 log " Reinstate original repositories configuration"
 if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
 	if [ -d "${MMCI_HOSTDIR}/repos.d-backup" ]; then
-		rm -rf /etc/zypp/repod.d
+		rm -rf /etc/zypp/repos.d
 		mv "${MMCI_HOSTDIR}/repos.d-backup" /etc/zypp/repos.d
 	fi
 else

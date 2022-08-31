@@ -166,8 +166,9 @@ function set_default_repos() {
 
 		if [ ! -d "${MMCI_HOSTDIR}/repos.d-backup" ]; then
 			mv /etc/zypp/repos.d "${MMCI_HOSTDIR}/repos.d-backup"
+			mkdir /etc/zypp/repos.d
 		else
-			rm -rf /etc/zypp/repos.d
+			rm -rf /etc/zypp/repos.d/*
 		fi
 
 		if [[ "$MMCI_OS_ID" =~ .*tumbleweed.* ]]; then
