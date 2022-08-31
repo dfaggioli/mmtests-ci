@@ -127,6 +127,15 @@ repo-update-non-oss@http://download.opensuse.org/update/leap/15.3/non-oss/
 "
 fi
 
+if [ -z "$Leap152_REPOS" ]; then
+	export Leap152_REPOS="
+repo-non-oss@http://download.opensuse.org/distribution/leap/15.2/repo/non-oss/
+repo-oss@http://download.opensuse.org/distribution/leap/15.2/repo/oss/
+repo-update@http://download.opensuse.org/update/leap/15.2/oss/
+repo-update-non-oss@http://download.opensuse.org/update/leap/15.2/non-oss/
+"
+fi
+
 # TODO: Move to internal?
 if [ -z "$SLES15SP2_REPOS" ]; then
 	export SLES15SP2_REPOS="
@@ -138,7 +147,19 @@ sdk-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SDK/12-SP5/x86_64
 #virt-devel@http://download.suse.de/ibs/Devel:/Virt:/SLE-12-SP5/SUSE_SLE-12-SP5_Update_standard
 fi
 
+# If PackageKit is there (which hopefully isn't the case) get rid of it
+# TODO: Find a better way to do this!
+function kill_packagekit() {
+	killall -9 gnome-software
+	killall -9 packagekitd
+	systemctl disable --now packagekit
+	systemctl disable --now packagekit-offline-update
+	systemctl disable --now packagekit-background.service
+	systemctl disable --now packagekit-background.timer
+}
+
 function set_default_repos() {
+	kill_packagekit
 	if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
 		local VERSION=""
 
@@ -169,14 +190,7 @@ function set_default_repos() {
 export -f set_default_repos
 
 function update_OS() {
-	# If PackageKit is there (which hopefully isn't the case) get rid of it
-	# TODO: Find a better way to do this!
-	killall -9 gnome-software
-	killall -9 packagekitd
-	systemctl disable --now packagekit
-	systemctl disable --now packagekit-offline-update
-	systemctl disable --now packagekit-background.service
-	systemctl disable --now packagekit-background.timer
+	kill_packagekit
 	$MMCI_PACKAGES_REFRESH || exit 255
 	$MMCI_PACKAGES_UPDATE || exit 255
 }
