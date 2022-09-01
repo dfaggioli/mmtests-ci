@@ -17,12 +17,9 @@ if [ ! -d "$MMCI_MMTESTS_DIR" ]; then
 		exit 255
 	fi
 else
-	pushd "$MMCI_MMTESTS_DIR"
+	pushd "$MMCI_MMTESTS_DIR" &> /dev/null
 	git pull
-	./bin/generate-generic-configs
-	./bin/generate-nas.sh
-	./bin/generate-fs-configs
-	popd
+	popd &> /dev/null
 fi
 
 # TODO: Shall we update the OS here? Or just leave it to the testplan?

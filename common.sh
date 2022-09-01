@@ -198,6 +198,15 @@ function update_OS() {
 }
 export -f update_OS
 
+function prepare_mmtests() {
+	pushd $MMCI_MMTESTS_DIR &> /dev/null || exit 255
+	./bin/generate-generic-configs
+	./bin/generate-nas.sh
+	./bin/generate-fs-configs
+	./bin/generate-localmachine-host-configs
+	popd &> /dev/null
+}
+
 function log() {
 	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
 }

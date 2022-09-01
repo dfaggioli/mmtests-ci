@@ -1,6 +1,7 @@
 START
 TEST official-rpms
 setups/official_rpms_setup.sh
+# setups/setups/install_kvm_rpms.sh all
 tests/single-vm.sh
 TEST devel-virt-rpms
 setups/repo_rpms_setup.sh Virtualization
