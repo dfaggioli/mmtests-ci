@@ -206,6 +206,7 @@ function prepare_mmtests() {
 	./bin/generate-localmachine-host-configs
 	popd &> /dev/null
 }
+export -f prepare_mmtests
 
 function log() {
 	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
