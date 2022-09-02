@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-[ -z "$DIR" ] && export DIR="/root"
+[ -z "$DIR" ] && export DIR="$HOME"
 [ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
 if [ -d "${MMCI_DIR}" ]; then
 	. "${MMCI_DIR}/common.sh" || exit 255
@@ -20,8 +20,8 @@ if [ -f "$TERM_FILE" ]; then
 fi
 
 while [ -f "$PAUSE_FILE" ]; do
-	echo "MMCI Pause file found: waiting 60 secs"
-	sleep 60
+	echo "MMCI Pause file found: waiting $MMCI_PAUSE_TIME secs"
+	sleep $MMCI_PAUSE_TIME
 done
 
 if [ ! -d "$MMCI_DIR" ]; then

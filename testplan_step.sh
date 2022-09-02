@@ -8,8 +8,7 @@
 # TODO: parametrize this
 RESULTS="${DIR}/mmci-results/"
 
-log "STARTING testplan_step.sh (in 60secs)"
-sleep 60
+log "STARTING testplan_step.sh"
 
 log "STARTING testplan_step.sh"
 

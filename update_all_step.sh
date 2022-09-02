@@ -17,9 +17,9 @@ if [ ! -d "$MMCI_MMTESTS_DIR" ]; then
 		exit 255
 	fi
 else
-	pushd "$MMCI_MMTESTS_DIR" &> /dev/null
+	pushd "$MMCI_MMTESTS_DIR"
 	git pull
-	popd &> /dev/null
+	popd
 fi
 
 # TODO: Shall we update the OS here? Or just leave it to the testplan?

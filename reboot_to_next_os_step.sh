@@ -26,7 +26,8 @@ update_OS
 # we will be back here. E.g., after someone of the other partition does
 # an olh-autoinst-set-default to us.
 
-sleep 30
+# FIXME: actually change GRUB
+sleep 300
 
 log "DONE reboot_to_next_os_step.sh"
 

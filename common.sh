@@ -10,9 +10,10 @@ export pushd popd
 
 ### Default values
 ### Config files can override pretty much any of them
-# Basic dir and file names
+# Generic (e.g., dir and file names) parameters
 export DIR="$HOME"
 export MMCI_DIR="${DIR}/mmtests-ci"
+export MMCI_PAUSE_TIME=120
 export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
 export MMCI_LOGDIR="${DIR}/mmci_logs"
 export MMCI_OS_RELEASE_FILE="/etc/os-release"
@@ -193,12 +194,12 @@ export -f start_libvirtd
 [ "$MMCI_MMTESTS_RUN_MONITORS" ] || export MMCI_MMTESTS_RUN_MONITORS="yes"
 
 function prepare_mmtests() {
-	pushd $MMCI_MMTESTS_DIR > /dev/null || fail "Cannot reach MMTests directory"
+	pushd $MMCI_MMTESTS_DIR || fail "Cannot reach MMTests directory"
 	./bin/generate-generic-configs
 	./bin/generate-nas.sh
 	./bin/generate-fs-configs
 	./bin/generate-localmachine-host-configs
-	popd > /dev/null
+	popd
 }
 export -f prepare_mmtests
 

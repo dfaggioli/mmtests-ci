@@ -1,6 +1,6 @@
 #!/bin/bash
 
 echo $@
-sleep 360
+sleep 180
 
 exit 0
