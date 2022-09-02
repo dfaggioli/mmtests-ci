@@ -1,15 +1,13 @@
 START
 TEST official-rpms
-setups/official_rpms_setup.sh
+setups/install-rpms.sh default
 # setups/setups/install_kvm_rpms.sh all
 tests/single-vm.sh
 TEST devel-virt-rpms
-setups/repo_rpms_setup.sh Virtualization
+setups/install-rpms.sh virt-devel
 tests/single-vm.sh
 tests/non-existing-test.sh
 tests/multi-vm.sh
-# Cleanup is actually a bit tricky... Let's see
-setups/repo_rpms_cleanup.sh
 TEST qemu-git-latest
 setups/upstream_qemu_setup.sh
 tests/single-vm.sh

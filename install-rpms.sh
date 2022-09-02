@@ -6,14 +6,6 @@
 # TODO: Do we want to handle installing from specific repo?
 #FROM="--from xxx" / "-r xxx"
 
-#### Modify zypper configuration to allow Vendor changes
-###if [ "$MMCI_REPO_ALLOW_VENDOR_CHANGE" = "yes" ]; then
-###	sed -i 's/# solver.allowVendorChange = false/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
-###fi
-###
-#### First of all, update everything
-###$MMCI_PACKAGE_REFRESH && $MMCI_PACKAGES_UPDATE
-
 LIST_PKGS=0
 LIST_PTTRNS=0
 PP_ALL=0

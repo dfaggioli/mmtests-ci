@@ -1,154 +1,129 @@
 #!/bin/bash
 
-[ -z "$DIR" ] && export DIR="/root"
-[ -z "$MMCI_DIR" ] && export MMCI_DIR="${DIR}/mmtests-ci"
+pushd () {
+	command pushd "$@" > /dev/null
+}
+popd () {
+	command popd "$@" > /dev/null
+}
+export pushd popd
+
+### Default values
+### Config files can override pretty much any of them
+# Basic dir and file names
+export DIR="$HOME"
+export MMCI_DIR="${DIR}/mmtests-ci"
 export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)"
-
-OS_RELEASE="/etc/os-release"
-if [ ! -f "$OS_RELEASE" ]; then
-	echo "ERROR: cannot find $OS_RELEASE"
-	exit 1
-fi
-
-function get_os_name() {
-	local NAME=""
-
-	NAME="$(cat $OS_RELEASE | grep ^NAME | cut -f2 -d'=')"
-	export MMCI_OS_NAME="$NAME"
-}
-
-function get_os_id() {
-	local ID=""
-
-	ID="$(cat $OS_RELEASE | grep ^ID= | cut -f2 -d'=')"
-	export MMCI_OS_ID="$ID"
-}
-
-function get_os_release() {
-	local VERSION=""
-	local VERSION_ID=""
-
-	if [ -z "$MMCI_OS_NAME" ]; then
-		get_os_name
-	fi
-
-	if [ -z "$MMCI_OS_ID" ]; then
-		get_os_id
-	fi
-
-	#if [[ "$MMCI_OS_NAME" == "SLES" ]]; then
-	#	VERSION="$(cat $OS_RELEASE | grep ^VERSION=)"
-	#elif [[ "$MMCI_OS_NAME" =~ .*Tumbleweed ]]; then
-	#	VERSION="$(cat $OS_RELEASE | grep ^VERSION | cut -f2 -d'=')"
-	#fi
-	if [ -z "$MMCI_OS_VERSION" ]; then
-		VERSION="$(cat $OS_RELEASE | grep VERSION= | cut -f2 -d'=')"
-		VERSION_ID="$(cat $OS_RELEASE | grep ^VERSION_ID= | cut -f2 -d'=')"
-		export MMCI_OS_VERSION="$VERSION"
-		export MMCI_OS_VERSION_ID="$VERSION_ID"
-	fi
-}
-
-get_os_release
-
-# By default we read ./ci-config, unless MMCI_CONFIGS is defined.
-function read_configs() {
-	# FIXME: Turn this list of paths into something that makes sense!
-	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config ./ci-config $MMCI_CONFIGS"
-	for C in $MMCI_CONFIGS
-	do
-		if [ ! -e "$C" ]; then
-			echo "WARNING: config file $C not found"
-		else
-			source "$C"
-		fi
-	done
-}
-
-# For all the scripts, we want to import the configuration files.
-read_configs
-
-# Some default values, used if we don't find them in the environment or in the config files.
-[ -z "$MMCI_PACKAGE_MANAGER" ] && export MMCI_PACKAGE_MANAGER=zypper
-if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
-	[ -z "$MMCI_PACKAGES_REFRESH" ] && export MMCI_PACKAGES_REFRESH="$MMCI_PACKAGE_MANAGER ref"
-	[ -z "$MMCI_REPO_ALLOW_VENDOR_CHANGE" ] && export MMCI_REPO_ALLOW_VENDOR_CHANGE="no"
-	[ "$MMCI_REPO_ALLOW_VENDOR_CHANGE"  == "yes" ] && VENDOR_CHANGE="--allow-vendor-change"
-	[ -z "$MMCI_PACKAGE_MANAGER_CMD" ] && export MMCI_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys $VENDOR_CHANGE"
-	[ -z "$MMCI_PACKAGES_INSTALL" ] && export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install --auto-agree-with-licenses --force-resolution --allow-downgrade"
-	if [ -z "$MMCI_PACKAGES_UPDATE" ]; then
-		if [[ "$MMCI_OS_ID" =~ .*tumbleweed.* ]]; then
-			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup --allow-downgrade --force-resolution --auto-agree-with-licenses"
-		else
-			export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD up --allow-downgrade --force-resolution --auto-agree-with-licenses"
-		fi
-	fi
-fi
-
-[ -z "$MMCI_MMTESTS_REPO" ] && export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
-[ -z "$MMCI_MMTESTS_BRANCH" ] && export MMCI_MMTESTS_BRANCH=master
-[ -z "$MMCI_MMTESTS_DIR" ] && export MMCI_MMTESTS_DIR="${DIR}/mmtests"
-
-[ -z "$MMCI_LOGDIR" ] && export MMCI_LOGDIR="${DIR}/mmci_logs"
-mkdir -p "$MMCI_LOGDIR"
-
-[ -z "$MMCI_RESULTS_DIR" ] && export MMCI_RESULTS_DIR="${DIR}/mmci_results"
-mkdir -p "$MMCI_RESULTS_DIR"
-
-# TODO: syntax alias@ULR-regexp
-if [ -z "$Tumbleweed_REPOS" ]; then
-	export Tumbleweed_REPOS="
+export MMCI_LOGDIR="${DIR}/mmci_logs"
+export MMCI_OS_RELEASE_FILE="/etc/os-release"
+# Package management (there's more later, after we've read the config files)
+# Syntax for repositories is:
+# - one line for each repository
+# - each line: alias@URL
+# TODO: Add repo priority
+export MMCI_PACKAGE_MANAGER="zypper"
+export MMCI_PACKAGES_ALLOW_VENDOR_CHANGE="yes"
+export MMCI_PACKAGES_FORCE_RECOMMENDS="yes"
+export MMCI_PACKAGE_REPOS_TUMBLEWEED="
 repo-oss@http://download.opensuse.org/tumbleweed/repo/oss/
 repo-update@http://download.opensuse.org/update/tumbleweed/
 repo-non-oss@http://download.opensuse.org/tumbleweed/repo/non-oss/
 "
 #virt-devel@https://download.opensuse.org/repositories/Virtualization/openSUSE_Tumbleweed/
-fi
-
-if [ -z "$Leap154_REPOS" ]; then
-	export Leap154_REPOS="
+export MMCI_PACKAGE_REPOS_LEAP154="
+repo-oss@http://download.opensuse.org/distribution/leap/15.4/repo/oss/
+repo-update@http://download.opensuse.org/update/leap/15.4/oss/
+repo-sle-update@http://download.opensuse.org/update/leap/15.4/sle/
 repo-backports-update@http://download.opensuse.org/update/leap/15.4/backports/
 repo-non-oss@http://download.opensuse.org/distribution/leap/15.4/repo/non-oss/
-repo-oss@http://download.opensuse.org/distribution/leap/15.4/repo/oss/
-repo-sle-update@http://download.opensuse.org/update/leap/15.4/sle/
-repo-update@http://download.opensuse.org/update/leap/15.4/oss/
 repo-update-non-oss@http://download.opensuse.org/update/leap/15.4/non-oss/
 "
-fi
-
-if [ -z "$Leap153_REPOS" ]; then
-	export Leap153_REPOS="
+export MMCI_PACKAGE_REPOS_LEAP153="
+repo-oss@http://download.opensuse.org/distribution/leap/15.3/repo/oss/
+repo-update@http://download.opensuse.org/update/leap/15.3/oss/
+repo-sle-update@http://download.opensuse.org/update/leap/15.3/sle/
 repo-backports-update@http://download.opensuse.org/update/leap/15.3/backports/
 repo-non-oss@http://download.opensuse.org/distribution/leap/15.3/repo/non-oss/
-repo-oss@http://download.opensuse.org/distribution/leap/15.3/repo/oss/
-repo-sle-update@http://download.opensuse.org/update/leap/15.3/sle/
-repo-update@http://download.opensuse.org/update/leap/15.3/oss/
 repo-update-non-oss@http://download.opensuse.org/update/leap/15.3/non-oss/
 "
-fi
-
-if [ -z "$Leap152_REPOS" ]; then
-	export Leap152_REPOS="
-repo-non-oss@http://download.opensuse.org/distribution/leap/15.2/repo/non-oss/
+export MMCI_PACKAGE_REPOS_LEAP152="
 repo-oss@http://download.opensuse.org/distribution/leap/15.2/repo/oss/
 repo-update@http://download.opensuse.org/update/leap/15.2/oss/
+repo-non-oss@http://download.opensuse.org/distribution/leap/15.2/repo/non-oss/
 repo-update-non-oss@http://download.opensuse.org/update/leap/15.2/non-oss/
 "
-fi
-
 # TODO: Move to internal?
-if [ -z "$SLES15SP2_REPOS" ]; then
-	export SLES15SP2_REPOS="
-server-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SERVER/12-SP5/x86_64/product
-server-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SERVER/12-SP5/x86_64/update
-sdk-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SDK/12-SP5/x86_64/product
-sdk-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SDK/12-SP5/x86_64/update
-"
-#virt-devel@http://download.suse.de/ibs/Devel:/Virt:/SLE-12-SP5/SUSE_SLE-12-SP5_Update_standard
+#if [ -z "$SLES15SP2_REPOS" ]; then
+#	export SLES15SP2_REPOS="
+#server-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SERVER/12-SP5/x86_64/product
+#server-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SERVER/12-SP5/x86_64/update
+#sdk-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SDK/12-SP5/x86_64/product
+#sdk-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SDK/12-SP5/x86_64/update
+#"
+##virt-devel@http://download.suse.de/ibs/Devel:/Virt:/SLE-12-SP5/SUSE_SLE-12-SP5_Update_standard
+#fi
+# Other OS and services names and stuff
+export MMCI_LIBVIRTD_SERVICE_NAME="libvirtd"
+
+# XXX
+function read_configs() {
+	# FIXME: Turn this list of paths into something that makes sense!
+	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config ./ci-config $MMCI_CONFIGS"
+	for C in $MMCI_CONFIGS ; do [[ -f "$C" ]] && . "$C" ; done
+}
+read_configs
+
+mkdir -p "$MMCI_LOGDIR"
+function log() {
+	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
+}
+export -f log
+
+function fail() {
+	local MSG=$1
+	local ERR=$2
+
+	[[ $ERR ]] || ERR=1
+	log "ERROR: $MSG"
+	exit $ERR
+}
+export -f fail
+
+function get_os_name() {
+	export MMCI_OS_NAME="$(cat $MMCI_OS_RELEASE_FILE | grep ^NAME | cut -f2 -d'=' | tr -d '"')"
+}
+
+function get_os_id() {
+	export MMCI_OS_ID="$(cat $MMCI_OS_RELEASE_FILE | grep ^ID= | cut -f2 -d'=' | tr -d '"')"
+}
+
+function get_os_release() {
+	[[ -f "$MMCI_OS_RELEASE_FILE" ]] || fail "Cannot find $MMCI_OS_RELEASE_FILE"
+	[[ "$MMCI_OS_NAME" ]] || get_os_name
+	[[ "$MMCI_OS_ID" ]] || get_os_id
+	if [[ ! "$MMCI_OS_VERSION" ]]; then
+		export MMCI_OS_VERSION="$(cat $MMCI_OS_RELEASE_FILE | grep VERSION= | cut -f2 -d'=')"
+		export MMCI_OS_VERSION_ID="$(cat $MMCI_OS_RELEASE_FILE | grep ^VERSION_ID= | cut -f2 -d'=')"
+	fi
+}
+get_os_release
+
+if [[ "$MMCI_PACKAGE_MANAGER" == "zypper" ]]; then
+	if [[ "$MMCI_OS_ID" =~ .*microos$ ]]; then
+		fail "Support for transactional-update not implemented (but coming soon)"
+	fi
+	[[ "$MMCI_PACKAGE_MANAGER_CMD" ]] || export MMCI_PACKAGE_MANAGER_CMD="$MMCI_PACKAGE_MANAGER --non-interactive --gpg-auto-import-keys"
+	[[ "$MMCI_PACKAGES_REFRESH" ]] || export MMCI_PACKAGES_REFRESH="$MMCI_PACKAGE_MANAGER_CMD ref"
+	[[ "$MMCI_PACKAGES_ALLOW_VENDOR_CHANGE" == "yes" ]] && VENDOR_CHANGE="--allow-vendor-change"
+	[[ "$MMCI_PACKAGES_FORCE_RECOMMENDS" == "yes" ]] && RECOMMENDS="--recommends"
+	[[ "$MMCI_PACKAGES_INSTALL" ]] || export MMCI_PACKAGES_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install --auto-agree-with-licenses --force-resolution --allow-downgrade $VENDOR_CHANGE $RECOMMENDS"
+	[[ "$MMCI_PACKAGES_PATTERNS_INSTALL" ]] && export MMCI_PACKAGES_PATTERNS_INSTALL="$MMCI_PACKAGES_INSTALL -t pattern"
+	[[ "$MMCI_PACKAGES_UPDATE" ]] && export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dist-upgrade --auto-agree-with-licenses --force-resolution --allow-downgrade $VENDOR_CHANGE $RECOMMENDS"
+	# TODO: Do we need a 'zypper up' variant of the above for Leap and SLE ?
 fi
 
 # If PackageKit is there (which hopefully isn't the case) get rid of it
-# TODO: Find a better way to do this!
+# FIXME: Maybe find a better way to do this ?
 function kill_packagekit() {
 	killall -9 gnome-software
 	killall -9 packagekitd
@@ -159,11 +134,18 @@ function kill_packagekit() {
 }
 export -f kill_packagekit
 
-function set_default_repos() {
+function setup_repos() {
+	local REPO_LIST=$@
+
 	kill_packagekit
 	if [ "$MMCI_PACKAGE_MANAGER" == "zypper" ]; then
+		local NAME=""
 		local VERSION=""
+		local REPOS=""
+		local RALIAS=""
 
+		# Backup existing repositories, but do it just once
+		# (hopefully, when the MMCI is started first on this OS)
 		if [ ! -d "${MMCI_HOSTDIR}/repos.d-backup" ]; then
 			mv /etc/zypp/repos.d "${MMCI_HOSTDIR}/repos.d-backup"
 			mkdir /etc/zypp/repos.d
@@ -171,44 +153,56 @@ function set_default_repos() {
 			rm -rf /etc/zypp/repos.d/*
 		fi
 
-		if [[ "$MMCI_OS_ID" =~ .*tumbleweed.* ]]; then
-			REPOS=$Tumbleweed_REPOS
-		elif [[ "$MMCI_OS_ID" =~ ".*leap.*" ]]; then
+		NAME=$(echo $MMCI_OS_NAME | awk '{print $NF;}' | tr [a-z] [A-Z])
+		if [[ "$NAME" == "TUMBLEWEED" ]]; then
+			REPOS=$MMCI_PACKAGE_REPOS_TUMBLEWEED
+		else
 			VERSION=$(echo $MMCI_OS_VERSION | tr -d '.')
-			eval "REPOS=\$Leap_${VERSION}"
-		elif [[ "$MMCI_OS_ID" =~ .*sles.* ]]; then
-			# TODO: Fetch SLE repo URLs from somewhere and import the vars here
-			VERSION=$(echo $MMCI_OS_VERSION | tr -d '-')
-			eval "REPOS=\$${MMCI_OS_NAME}${VERSION}"
+			eval "REPOS=\$MMCI_PACKAGE_REPOS_${NAME}${VERSION}"
 		fi
 
-		# TODO: Repo priority
-		for R in $REPOS ; do
-			RALIAS=$(echo $R | awk -F '@' '{print $1}')
-			zypper ar -f "$(echo $R | awk -F '@' '{print $2}')" "$RALIAS"
+		for R in $REPO_LIST ; do
+			RR=$(grep  -E "\b${R}\@" <<< $REPOS | head -1)
+			[[ ! $RR ]] && continue
+			RALIAS=$(echo $RR | awk -F '@' '{print $1}')
+			zypper ar -f "$(echo $RR | awk -F '@' '{print $2}')" "$RALIAS"
 		done
 	fi
 }
-export -f set_default_repos
+export -f setup_repos
 
 function update_OS() {
 	kill_packagekit
-	$MMCI_PACKAGES_REFRESH || exit 255
-	$MMCI_PACKAGES_UPDATE || exit 255
+	$MMCI_PACKAGES_REFRESH || fail "Cannot refresh packages"
+	$MMCI_PACKAGES_UPDATE || fail "Cannot update packages"
 }
 export -f update_OS
 
+function start_libvirtd() {
+	local CONN=$1 # connection string (optional)
+
+	systemctl start $MMCI_LIBVIRTD_SERVICE_NAME || fail "Cannot start libvirtd service. Skipping test..."
+	command -v virsh &> /dev/null || fail "virsh command not found. Skipping test..."
+	virsh -v &> /dev/null || fail "Libvirt daemon not reachable. Skipping test..."
+}
+export -f start_libvirtd
+
+[ "$MMCI_MMTESTS_REPO" ] || export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
+[ "$MMCI_MMTESTS_BRANCH" ] || export MMCI_MMTESTS_BRANCH=master
+[ "$MMCI_MMTESTS_DIR" ] || export MMCI_MMTESTS_DIR="${DIR}/mmtests"
+[ "$MMCI_MMTESTS_RUN_MONITORS" ] || export MMCI_MMTESTS_RUN_MONITORS="yes"
+
 function prepare_mmtests() {
-	pushd $MMCI_MMTESTS_DIR &> /dev/null || exit 255
+	pushd $MMCI_MMTESTS_DIR > /dev/null || fail "Cannot reach MMTests directory"
 	./bin/generate-generic-configs
 	./bin/generate-nas.sh
 	./bin/generate-fs-configs
 	./bin/generate-localmachine-host-configs
-	popd &> /dev/null
+	popd > /dev/null
 }
 export -f prepare_mmtests
 
-function log() {
-	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
-}
-export -f log
+[ "$MMCI_RESULTS_DIR" ] || export MMCI_RESULTS_DIR="${DIR}/mmci_results"
+mkdir -p "$MMCI_RESULTS_DIR"
+
+

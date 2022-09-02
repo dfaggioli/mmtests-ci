@@ -10,7 +10,7 @@
 # TODO: Repos
 #
 # XXX
-#export MMCI_REPO_ALLOW_VENDOR_CHANGE="yes"
+#export MMCI_PACKAGES_ALLOW_VENDOR_CHANGE="yes"
 
 #
 export MMCI_MMTESTS_REPO=https://github.com/dfaggioli/mmtests.git

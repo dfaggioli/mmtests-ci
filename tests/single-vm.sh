@@ -2,8 +2,12 @@
 
 echo $@
 
-systemctl enable --now libvirtd
-
+start_libvirtd
 prepare_mmtests
+
+MONITORS="-m"
+[[ "$MMCI_MMTESTS_RUN_MONITORS" == "no" ]] && MONITORS="-n"
+
+./run-kvm.sh $MONITOR -L -C host-configs/config-2vm-4vcpu-4ram -L -c config BLA2
 
 exit 0
