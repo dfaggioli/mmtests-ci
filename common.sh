@@ -264,11 +264,14 @@ export -f prepare_mmtests
 function fetch_mmtests_config() {
 	local PREFIX=""
 	local CONFIG=""
+	local HOST_CONFIG=""
 
 	if [[ "$1" == "-h" ]]; then
 		HOST_CONFIG="host-"
 		shift
 	fi
+	CONFIG="$1"
+	shift
 
 	if [[ -f "${MMCI_HOSTDIR}/${CONFIG}" ]]; then
 		echo "${MMCI_HOSTDIR}/${CONFIG}"
