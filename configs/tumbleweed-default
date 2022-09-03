@@ -1,0 +1,38 @@
+#
+export MMCI_PACKAGE_MANAGER=zypper
+export MMCI_PACKAGE_MANAGER_CMD="zypper --non-interactive --gpg-auto-import-keys"
+export MMCI_PACKAGE_INSTALL="$MMCI_PACKAGE_MANAGER_CMD install -l --force-resolution"
+export MMCI_PACKAGES_REFRESH="$MMCI_PACKAGE_MANAGER ref"
+export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dup"
+
+export MMCI_INSTALL_RPMS="git qemu-x86 tftp libvirt-daemon-qemu virt-install libvirt-client libvirt-daemon-config-network tigervnc virt-manager vm-install"
+
+# TODO: syntax alias@ULR-regexp
+export Tumbleweed_REPOS="
+repo-oss@http://download.opensuse.org/tumbleweed/repo/oss/
+repo-update@http://download.opensuse.org/update/tumbleweed/
+"
+
+export MMCI_PACKAGES_ALLOW_VENDOR_CHANGE="yes"
+
+export MMCI_MMTESTS_REPO=https://github.com/dfaggioli/mmtests.git
+export MMCI_MMTESTS_BRANCH=wip/bench-virt
+export MMCI_MMTESTS_DIR="./mmtests-test"
+
+export MMCI_RUN_ID="tumbleweed-default-latest"
+export MMCI_TRIGGER_FILES_HASH="qemu-system-x86_64 libvirtd"
+export MMCI_TRIGGER_CMDS_HASH="
+uname_host@uname -a
+"
+
+export MMCI_HOST_CONFIGS="bin-virt/host-configs/config-1vm-1vcpu-4ram bin-virt/host-configs/config-2vm-1vcpu-4ram"
+export MMCI_MMTESTS_CONFIGS="configs/config-workload-stream-single configs/config-workload-stream-omp-llcs"
+
+#export MMCI_RESULTS_HOST="root@virt100"
+export MMCI_RESULTS_HOST=""
+#export MMCI_RESULTS_HOST_REMOTE_CMD="ssh ${MMCI_RESULTS_HOST}"
+export MMCI_RESULTS_HOST_REMOTE_CMD=""
+#export MMCI_RESULTS_HOST_COPY_CMD="scp ${MMCI_RESULTS_HOST}"
+export MMCI_RESULTS_HOST_COPY_CMD="cp -a"
+#export MMCI_RESULTS_PATH="${MMCI_RESULTS_HOST}:/bla/blu"
+export MMCI_RESULTS_PATH="/root/results/"

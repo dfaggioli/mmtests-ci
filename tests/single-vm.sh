@@ -1,15 +1,8 @@
-#!/bin/bash -x
+#!/bin/bash
 
-echo $@
+log "STARTING tests/single-vm.sh (args: $@)"
 
-start_libvirtd
-prepare_mmtests
+sleep 180
 
-MONITORS="-m"
-[[ "$MMCI_MMTESTS_RUN_MONITORS" == "no" ]] && MONITORS="-n"
-
-pushd $MMCI_MMTESTS_DIR
-./run-kvm.sh $MONITOR -L -C host-configs/config-2vm-4vcpu-4ram -L -c config BLA2
-popd
-
+log "DONE tests/single-vm.sh"
 exit 0

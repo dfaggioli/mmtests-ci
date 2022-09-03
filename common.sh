@@ -73,6 +73,11 @@ repo-update-non-oss@http://download.opensuse.org/update/leap/15.2/non-oss/
 #fi
 # Other OS and services names and stuff
 export MMCI_LIBVIRTD_SERVICE_NAME="libvirtd"
+# MMTests related values
+export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
+export MMCI_MMTESTS_BRANCH=master
+export MMCI_MMTESTS_DIR="${DIR}/mmtests"
+export MMCI_MMTESTS_FORCE_MONITORS="no"
 
 function log() {
 	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
@@ -239,16 +244,12 @@ export -f update_OS
 function start_libvirtd() {
 	local CONN=$1 # connection string (optional)
 
+	# TODO: Maybe check if it's running already
 	systemctl start $MMCI_LIBVIRTD_SERVICE_NAME || fail "Cannot start libvirtd service. Skipping test..."
 	command -v virsh &> /dev/null || fail "virsh command not found. Skipping test..."
 	virsh -v &> /dev/null || fail "Libvirt daemon not reachable. Skipping test..."
 }
 export -f start_libvirtd
-
-[ "$MMCI_MMTESTS_REPO" ] || export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
-[ "$MMCI_MMTESTS_BRANCH" ] || export MMCI_MMTESTS_BRANCH=master
-[ "$MMCI_MMTESTS_DIR" ] || export MMCI_MMTESTS_DIR="${DIR}/mmtests"
-[ "$MMCI_MMTESTS_RUN_MONITORS" ] || export MMCI_MMTESTS_RUN_MONITORS="yes"
 
 function prepare_mmtests() {
 	pushd $MMCI_MMTESTS_DIR || fail "Cannot reach MMTests directory"
@@ -260,3 +261,25 @@ function prepare_mmtests() {
 }
 export -f prepare_mmtests
 
+function fetch_mmtests_config() {
+	local PREFIX=""
+	local CONFIG=""
+
+	if [[ "$1" == "-h" ]]; then
+		HOST_CONFIG="host-"
+		shift
+	fi
+
+	if [[ -f "${MMCI_HOSTDIR}/${CONFIG}" ]]; then
+		echo "${MMCI_HOSTDIR}/${CONFIG}"
+	elif [[ -f "${MMCI_DIR}/${PREFIX}configs/${CONFIG}" ]]; then
+		echo "${MMCI_DIR}/${PREFIX}configs/${CONFIG}"
+	elif [[ -f "${MMCI_MMTESTS_DIR}/${PREFIX}configs/${CONFIG}" ]]; then
+		echo "${MMCI_MMTESTS_DIR}/${PREFIX}configs/${CONFIG}"
+	elif [[ -f "${MMCI_MMTESTS_DIR}/${CONFIG}" ]]; then
+		echo "${MMCI_MMTESTS_DIR}/${PREFIX}${CONFIG}"
+	else
+		echo ""
+	fi
+}
+export -f fetch_mmtests_config
