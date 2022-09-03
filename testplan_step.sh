@@ -30,7 +30,7 @@ while read -r -u 3 LINE; do
 	else
 		log "RUNNING $LINE"
 		CMD=$(echo "$LINE" | cut -f1 -d' ')
-		PARAMS=$(echo "$LINE" | cut -f2- -d' ')
+		[[ $(wc -w <<< "$LINE") -gt 1 ]] && PARAMS=$(echo "$LINE" | cut -f2- -d' ')
 		${MMCI_DIR}/${CMD} --test $TESTNAME ${PARAMS}
 		if [ $? -ne 0 ]; then
 			# The script failed. Either there's no need to run this

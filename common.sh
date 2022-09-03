@@ -155,7 +155,7 @@ if [[ "$MMCI_PACKAGE_MANAGER" == "zypper" ]]; then
 	[[ "$MMCI_PACKAGES_PATTERNS_INSTALL" ]] || export MMCI_PACKAGES_PATTERNS_INSTALL="$MMCI_PACKAGES_INSTALL -t pattern"
 	[[ "$MMCI_PACKAGES_UPDATE" ]] || export MMCI_PACKAGES_UPDATE="$MMCI_PACKAGE_MANAGER_CMD dist-upgrade --auto-agree-with-licenses --force-resolution --allow-downgrade $VENDOR_CHANGE $RECOMMENDS"
 	# TODO: Do we need a 'zypper up' variant of the above for Leap and SLE ?
-	[[ $MMCI_PACKAGES_KVM_INSTALL_ALL_PATTERNS ]] || export MMCI_PACKAGES_KVM_INSTALL_ALL_PATTERNS="-t pattern kvm_server kvm_tools"
+	[[ $MMCI_PACKAGES_KVM_INSTALL_ALL_PATTERNS ]] || export MMCI_PACKAGES_KVM_INSTALL_ALL_PATTERNS="kvm_server kvm_tools"
 	[[ $MMCI_PACKAGES_KVM_INSTALL_BASE_PACKAGES ]] || export MMCI_PACKAGES_KVM_INSTALL_BASE_PACKAGES="qemu-x86 tftp libvirt-daemon-qemu virt-install libvirt-client libvirt-daemon-config-network tigervnc virt-manager vm-install"
 fi
 
