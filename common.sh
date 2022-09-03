@@ -264,10 +264,9 @@ export -f prepare_mmtests
 function fetch_mmtests_config() {
 	local PREFIX=""
 	local CONFIG=""
-	local HOST_CONFIG=""
 
 	if [[ "$1" == "-h" ]]; then
-		HOST_CONFIG="host-"
+		PREFIX="host-"
 		shift
 	fi
 	CONFIG="$1"

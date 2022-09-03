@@ -1,4 +1,6 @@
 START
+TEST official-rpms-baremetal
+tests/baremetal.sh
 TEST official-rpms
 setups/setup-repos.sh --update default
 setups/install-rpms.sh --kvm-all
@@ -9,10 +11,9 @@ setups/setup-repos.sh --update default virt-devel
 # The next step should not be necessary, but for now let's do it...
 setups/install-rpms.sh --kvm-all
 tests/single-vm.sh
-tests/non-existing-test.sh
 tests/multi-vms.sh
-TEST qemu-git-latest
-setups/upstream_qemu_setup.sh
-tests/single-vm.sh
-tests/multi-vm.sh
+#TEST qemu-git-latest
+#setups/upstream_qemu_setup.sh
+#tests/single-vm.sh
+#tests/multi-vm.sh
 END
