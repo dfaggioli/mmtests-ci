@@ -43,6 +43,9 @@ for H in $HOST_CONFIGS ; do
 			start_libvirtd
 			BIN="run-kvm"
 			HC_STR="-L -C $HC"
+			echo export MMTESTS_PSSH_OUTDIR=/tmp >> $HC
+			echo export MMTESTS_PSSH_CONFIG_OPTIONS="-v" >> $HC
+			echo MMTESTS_SSH_CONFIG_OPTIONS="-o LogLevel=INFO" >> $HC
 		fi
 
 		# XXX
@@ -54,9 +57,10 @@ for H in $HOST_CONFIGS ; do
 		# Run the test
 		TESTID="${TEST}_${HCONF}_$(date +%m%d%Y_%H%M)"
 		rm -rf work/log
-		./${BIN}.sh $MONITOR $HC_STR -c $TC $TESTID
+		bash -x ./${BIN}.sh $MONITOR $HC_STR -c $TC $TESTID
 
 		# Save the results
+		mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/multi-vms" # XXX parametrize multi-vm
 		cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/multi-vms/"
 	done
 done

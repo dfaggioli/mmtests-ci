@@ -6,6 +6,8 @@
 
 log "STARTING tests/multi-vms.sh (args: $@)"
 
+echo "XXX $0"
+
 #XXX
 # XXX for baremetal run, e.g. "baremetal@-"
 export HOST_CONFIGS="
