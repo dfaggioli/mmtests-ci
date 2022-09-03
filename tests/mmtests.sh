@@ -42,10 +42,11 @@ for H in $HOST_CONFIGS ; do
 
 			start_libvirtd
 			BIN="run-kvm"
-			HC_STR="-L -C $HC"
 			echo export MMTESTS_PSSH_OUTDIR=/tmp >> $HC
 			echo export MMTESTS_PSSH_CONFIG_OPTIONS="-v" >> $HC
 			echo MMTESTS_SSH_CONFIG_OPTIONS="-o LogLevel=INFO" >> $HC
+			cp "$HC" "${MMCI_MMTESTS_DIR}/mmtests-host-config"
+			HC_STR="-L -C mmtests-host-config"
 		fi
 
 		# XXX
@@ -53,11 +54,12 @@ for H in $HOST_CONFIGS ; do
 		TCONFIG=$(echo $T | awk -F '@' '{print $2}')
 		TC=$(fetch_mmtests_config $TCONFIG)
 		[[ $TC ]] || fail "Cannot find the config file $TCONFIG for the test $TEST"
+		cp "$TC" "${MMCI_MMTESTS_DIR}/mmtests-config"
 
 		# Run the test
 		TESTID="${TEST}_${HCONF}_$(date +%m%d%Y_%H%M)"
 		rm -rf work/log
-		bash -x ./${BIN}.sh $MONITOR $HC_STR -c $TC $TESTID
+		bash -x ./${BIN}.sh $MONITOR $HC_STR -c mmtests-config $TESTID
 
 		# Save the results
 		mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/multi-vms" # XXX parametrize multi-vm
