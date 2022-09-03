@@ -37,7 +37,7 @@ for H in $HOST_CONFIGS ; do
 			BIN="run-mmtests"
 			HC_STR=""
 		else
-			HC=$(fetch_test_config -h $HCONFIG)
+			HC=$(fetch_mmtests_config -h $HCONFIG)
 			[[ $HC ]] || fail "Cannot find the host config file $HCONFIG for the configuration $HCONF"
 
 			start_libvirtd
@@ -48,7 +48,7 @@ for H in $HOST_CONFIGS ; do
 		# XXX
 		TEST=$(echo $T | awk -F '@' '{print $1}')
 		TCONFIG=$(echo $T | awk -F '@' '{print $2}')
-		TC=$(fetch_test_config $TCONFIG)
+		TC=$(fetch_mmtests_config $TCONFIG)
 		[[ $TC ]] || fail "Cannot find the config file $TCONFIG for the test $TEST"
 
 		# Run the test
