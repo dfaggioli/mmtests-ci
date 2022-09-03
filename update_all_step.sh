@@ -9,7 +9,7 @@ git checkout main || exit 255 # FIXME: Handle failure better
 git pull origin main # FIXME: Handle failure (at all!)
 
 # Pull/Update MMTests
-log " Pulling or updating MMTests itself"
+log " Cloning or updating MMTests itself"
 if [ ! -d "$MMCI_MMTESTS_DIR" ]; then
 	git clone --branch $MMCI_MMTESTS_BRANCH --single-branch $MMCI_MMTESTS_REPO "$MMCI_MMTESTS_DIR"
 	if [ $? -ne 0 ]; then

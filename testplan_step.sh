@@ -10,8 +10,6 @@ RESULTS="${DIR}/mmci-results/"
 
 log "STARTING testplan_step.sh"
 
-log "STARTING testplan_step.sh"
-
 L=0
 LASTLINE=$(cat ${MMCI_HOSTDIR}/testplan.step 2> /dev/null || echo "0")
 while read -r -u 3 LINE; do
@@ -31,7 +29,9 @@ while read -r -u 3 LINE; do
 		log "WARNING: script ${MMCI_DIR}/${LINE} is missing. Trying to continue..."
 	else
 		log "RUNNING $LINE"
-		eval ${MMCI_DIR}/${LINE} $TESTNAME
+		CMD=$(echo "$LINE" | cut -f1 -d' ')
+		PARAMS=$(echo "$LINE" | cut -f2- -d' ')
+		${MMCI_DIR}/${CMD} --test $TESTNAME ${PARAMS}
 		if [ $? -ne 0 ]; then
 			# The script failed. Either there's no need to run this
 			# test, or something did not work. In any case, let's
