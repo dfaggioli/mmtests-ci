@@ -9,7 +9,7 @@ log "STARTING tests/multi-vms.sh (args: $@)"
 #XXX
 # XXX for baremetal run, e.g. "baremetal@-"
 export HOST_CONFIGS="
-2vm4vcpu4ram@/config-2vm-4vcpu-4ram
+2vm4vcpu4ram@config-2vm-4vcpu-4ram
 "
 
 # XXX
