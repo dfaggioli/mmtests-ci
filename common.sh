@@ -209,7 +209,7 @@ function add_repos() {
 			fi
 		fi
 
-		REPOS_LIST=$(echo $REPOS_LIST | sed "s/default/$DEFAULT_REPOS/") ; echo $REPOS_LIST
+		REPO_LIST=$(echo $REPO_LIST | sed "s/default/$DEFAULT_REPOS/")
 		for R in $REPO_LIST ; do
 			if [[ "$R" =~ .*\@(https?|ftp|file)://.* ]]; then
 				# This element is a "repo-spec" (see above)
