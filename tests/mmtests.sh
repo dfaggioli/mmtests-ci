@@ -25,6 +25,9 @@ done
 
 # XXX
 # check_run_test $TESTNAME
+echo "YYY $PPID"
+cat /proc/$PPID/comm
+ps aux |grep $PPID
 
 prepare_mmtests
 for H in $HOST_CONFIGS ; do
