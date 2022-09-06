@@ -11,6 +11,7 @@
 
 TNAME="test"
 TGROUP="default"
+CHECK="go"
 
 while true ; do
 	if [[ "$1" == "--testname" ]]; then
@@ -32,19 +33,17 @@ function check_rpms() {
 	rpm -qa | sort > "$RPMLIST"
 
 	if diff "$LATEST_RPMLIST" "$RPMLIST" ; then
-		mv "$RPMLIST" "$LATEST_RPMLIST"
-		echo "go"
+		# They look the same, no need to do anything!
+		CHECK="no-go"
 	else
-		echo "no-go"
+		mv "$RPMLIST" "$LATEST_RPMLIST"
+		CHECK="go"
 	fi
 }
 
 case "$TNAME" in
 	official-rpms)
-		CHECK=$(check_rpms)
-		;;
-	*)
-		CHECK="go"
+		check_rpms
 		;;
 esac
 
