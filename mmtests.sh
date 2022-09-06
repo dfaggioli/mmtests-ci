@@ -8,7 +8,12 @@
 TESTGROUP=$(cat /proc/${PPID}/comm)
 TESTGROUP=$(basename $TESTGROUP)
 TESTGROUP=$(echo $TESTGROUP | cut -f1 -d'.')
-# check_run_test $TESTNAME
+
+${DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP"
+if [[ $? -eq 0 ]] ; then
+	log "Skipping ${TESTNAME}: nothing changed since last run"
+	exit 0
+fi
 
 [[ "$MMCI_MMTESTS_FORCE_MONITORS" == "yes" ]] && MONITORS="-m"
 
