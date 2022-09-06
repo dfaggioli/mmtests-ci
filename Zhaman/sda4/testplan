@@ -1,9 +1,8 @@
 START
-TEST official-rpms-baremetal
-tests/baremetal.sh
 TEST official-rpms
 setups/setup-repos.sh --update default
 setups/install-rpms.sh --kvm-all
+tests/baremetal.sh
 tests/single-vm.sh
 tests/multi-vms.sh
 TEST devel-virt-rpms

@@ -4,17 +4,6 @@
 #
 # Usage is:
 
-# XXX
-TESTGROUP=$(cat /proc/${PPID}/comm)
-TESTGROUP=$(basename $TESTGROUP)
-TESTGROUP=$(echo $TESTGROUP | cut -f1 -d'.')
-
-${DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP"
-if [[ $? -eq 0 ]] ; then
-	log "Skipping ${TESTNAME}: nothing changed since last run"
-	exit 0
-fi
-
 [[ "$MMCI_MMTESTS_FORCE_MONITORS" == "yes" ]] && MONITORS="-m"
 
 pushd $MMCI_MMTESTS_DIR
@@ -33,6 +22,17 @@ while true ; do
 		break
 	fi
 done
+
+# XXX
+TESTGROUP=$(cat /proc/${PPID}/comm)
+TESTGROUP=$(basename $TESTGROUP)
+TESTGROUP=$(echo $TESTGROUP | cut -f1 -d'.')
+
+${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP"
+if [[ $? -eq 0 ]] ; then
+	log "Skipping ${TESTNAME}: nothing changed since last run"
+	exit 0
+fi
 
 prepare_mmtests
 for H in $HOST_CONFIGS ; do
