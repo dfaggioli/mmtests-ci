@@ -27,7 +27,7 @@ done
 
 function check_rpms() {
 	local RPMLIST=$(mktemp /tmp/curr-rpm-list-XXXX.txt)
-	local LATEST_RPMLIST="${MMCI_RESULTS_DIR}/${TNAME}/rpm-packages.txt"
+	local LATEST_RPMLIST="${MMCI_RESULTS_DIR}/${TNAME}/${TGROUP}/rpm-packages.txt"
 
 	[[ -f "$LATEST_RPMLIST" ]] || touch "$LATEST_RPMLIST"
 	rpm -qa | sort > "$RPMLIST"

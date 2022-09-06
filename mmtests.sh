@@ -27,6 +27,7 @@ done
 TESTGROUP=$(cat /proc/${PPID}/comm)
 TESTGROUP=$(basename $TESTGROUP)
 TESTGROUP=$(echo $TESTGROUP | cut -f1 -d'.')
+mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
 
 ${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP"
 if [[ $? -eq 0 ]] ; then
@@ -70,7 +71,6 @@ for H in $HOST_CONFIGS ; do
 		bash -x ./${BIN}.sh $MONITOR $HC_STR -c mmtests-config $TESTID
 
 		# Save the results
-		mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
 		cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
 	done
 done
