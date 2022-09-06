@@ -285,3 +285,4 @@ function fetch_mmtests_config() {
 	fi
 }
 export -f fetch_mmtests_config
+

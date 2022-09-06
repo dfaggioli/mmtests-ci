@@ -19,7 +19,7 @@ export TESTS="
 stream-default@config
 "
 
-${MMCI_DIR}/tests/mmtests.sh $@
+${MMCI_DIR}/mmtests.sh $@
 
 log "DONE multi-vms.sh"
 exit 0

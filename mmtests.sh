@@ -4,6 +4,12 @@
 #
 # Usage is:
 
+# XXX
+TESTGROUP=$(cat /proc/${PPID}/comm)
+TESTGROUP=$(basename $TESTGROUP)
+TESTGROUP=$(echo $TESTGROUP | cut -f1 -d'.')
+# check_run_test $TESTNAME
+
 [[ "$MMCI_MMTESTS_FORCE_MONITORS" == "yes" ]] && MONITORS="-m"
 
 pushd $MMCI_MMTESTS_DIR
@@ -22,12 +28,6 @@ while true ; do
 		break
 	fi
 done
-
-# XXX
-# check_run_test $TESTNAME
-echo "YYY $PPID"
-cat /proc/$PPID/comm
-ps aux |grep $PPID
 
 prepare_mmtests
 for H in $HOST_CONFIGS ; do
@@ -65,8 +65,8 @@ for H in $HOST_CONFIGS ; do
 		bash -x ./${BIN}.sh $MONITOR $HC_STR -c mmtests-config $TESTID
 
 		# Save the results
-		mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/multi-vms" # XXX parametrize multi-vm
-		cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/multi-vms/"
+		mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
+		cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
 	done
 done
 

@@ -17,7 +17,7 @@ export TESTS="
 stream-default@config
 "
 
-${MMCI_DIR}/tests/mmtests.sh $@
+${MMCI_DIR}/mmtests.sh $@
 
 log "DONE baremetal.sh"
 exit 0
