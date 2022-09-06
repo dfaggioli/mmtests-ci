@@ -42,7 +42,7 @@ function check_rpms() {
 }
 
 case "$TNAME" in
-	official-rpms)
+	"official-rpms" | "devel-virt-rpms")
 		check_rpms
 		;;
 esac
