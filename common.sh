@@ -126,8 +126,9 @@ function setup_host_dirs() {
 	#
 	# MMCI_RESULTS_DIR, we'll create it later, after having read the config
 	# files (just in case it's overridden).
-	export MMCI_HOSTDIR="${MMCI_DIR}/$(hostname -s)_${ROOT_PART}"
-	export MMCI_RESULTS_DIR="${DIR}/mmci-results/$(hostname -s)_${ROOT_PART}"
+	export MMCI_HOSTPATH="$(hostname -s)/${ROOT_PART}"
+	export MMCI_HOSTDIR="${MMCI_DIR}/${MMCI_HOSTPATH}"
+	export MMCI_RESULTS_DIR="${DIR}/mmci-results/${MMCI_HOSTPATH}"
 }
 
 # XXX
