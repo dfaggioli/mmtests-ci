@@ -30,7 +30,7 @@ TESTGROUP=$(echo $TESTGROUP | cut -f1 -d'.')
 mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
 
 ${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP"
-if [[ $? -eq 0 ]] ; then
+if [[ $? -ne 0 ]] ; then
 	log "Skipping ${TESTNAME}: nothing changed since last run"
 	exit 0
 fi
