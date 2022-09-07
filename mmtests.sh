@@ -66,12 +66,15 @@ for H in $HOST_CONFIGS ; do
 		cp "$TC" "${MMCI_MMTESTS_DIR}/mmtests-config"
 
 		# Run the test
-		TESTID="${TEST}_${HCONF}_$(date +%m%d%Y_%H%M)"
+		TESTID="${TEST}_${HCONF}_$(date +%Y%m%d-%H%M)"
 		rm -rf work/log
 		bash -x ./${BIN}.sh $MONITOR $HC_STR -c mmtests-config $TESTID
 
 		# Save the results
-		cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
+		if [[ $? -eq 0 ]]; then
+			cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
+			mv "${MMCI_DIR}/_check_tmp_dir/*" "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
+		fi
 	done
 done
 

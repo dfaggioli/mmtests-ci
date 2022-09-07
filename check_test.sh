@@ -26,7 +26,7 @@ while true ; do
 done
 
 function check_rpms() {
-	local RPMLIST=$(mktemp /tmp/curr-rpm-list-XXXX.txt)
+	local RPMLIST="${MMCI_DIR}/_check_tmp_dir/rpm-packages.txt"
 	local LATEST_RPMLIST="${MMCI_RESULTS_DIR}/${TNAME}/${TGROUP}/rpm-packages.txt"
 
 	[[ -f "$LATEST_RPMLIST" ]] || touch "$LATEST_RPMLIST"
@@ -36,12 +36,12 @@ function check_rpms() {
 		# They look the same, no need to do anything!
 		CHECK="no-go"
 	else
-		mv "$RPMLIST" "$LATEST_RPMLIST"
 		CHECK="go"
 	fi
 }
 
 case "$TNAME" in
+	mkdir -p ${MMCI_DIR}/_check_tmp_dir
 	"official-rpms" | "devel-virt-rpms")
 		check_rpms
 		;;
