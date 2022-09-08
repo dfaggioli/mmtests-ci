@@ -29,7 +29,7 @@ fi
 for R in $MMCI_ADDITIONAL_GITREPOS_LIST ; do
 	# TODO: We might want to support multiple branches too
 	RURL=$(echo $R | awk -F '@' '{print $2}')
-	RDIR=$"{DIR}/$(echo $R | awk -F '@' '{print $1}')"
+	RDIR="${DIR}/$(echo $R | awk -F '@' '{print $1}')"
 	log " Cloning updating $RURL (into $RDIR)"
 	# Check if we can actually reach it (otherwise, just skipt it)
 	git -c http.sslVerify=false ls-remote "$RURL" &> /dev/null || continue

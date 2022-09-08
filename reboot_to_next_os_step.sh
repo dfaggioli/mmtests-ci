@@ -20,13 +20,14 @@ update_OS
 # Here we want to tweak GRUB (or whatever) to make sure that we will boot in
 # the "next" OS that we want to test on this host (if any, of course)!
 #
-# E.g., we can use olh-autoinst, to change partition!
-#
-# The update_all_step.sh script will be run again, on this OS, when
-# we will be back here. E.g., after someone of the other partition does
-# an olh-autoinst-set-default to us.
+# Since every (partition on every) machine may potential have its own way
+# of doing such, rely on them for providing it. That is, we just import steps
+# that we expect to find in the machine-&-partition specific configuration
+# files, where testplans also are (if not, we just reboot).
+[[ -f "${MMCI_HOSTDIR}/next_os" ]] . "${MMCI_HOSTDIR}/next_os"
 
-# FIXME: actually change GRUB
+# Done! the update_all_step.sh script will be run again, on this OS, when
+# we will be back here, in this partition.
 sleep 300
 
 log "DONE reboot_to_next_os_step.sh"
