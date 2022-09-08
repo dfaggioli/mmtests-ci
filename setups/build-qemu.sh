@@ -89,5 +89,7 @@ pwd
 
 popd
 
+sleep 600
+
 log "DONE build-qemu.sh"
 exit 0
