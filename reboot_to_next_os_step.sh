@@ -24,7 +24,7 @@ update_OS
 # of doing such, rely on them for providing it. That is, we just import steps
 # that we expect to find in the machine-&-partition specific configuration
 # files, where testplans also are (if not, we just reboot).
-[[ -f "${MMCI_HOSTDIR}/next_os" ]] . "${MMCI_HOSTDIR}/next_os"
+[[ -f "${MMCI_HOSTDIR}/next_os" ]] && . "${MMCI_HOSTDIR}/next_os"
 
 # Done! the update_all_step.sh script will be run again, on this OS, when
 # we will be back here, in this partition.
