@@ -9,7 +9,7 @@ git checkout main || exit 255 # FIXME: Handle failure better
 git pull origin main # FIXME: Handle failure (at all!)
 
 # Pull/Update MMTests
-log " Cloning or updating MMTests itself"
+log " Cloning or updating MMTests"
 if [ ! -d "$MMCI_MMTESTS_DIR" ]; then
 	git clone --branch $MMCI_MMTESTS_BRANCH --single-branch $MMCI_MMTESTS_REPO "$MMCI_MMTESTS_DIR"
 	if [ $? -ne 0 ]; then
@@ -21,6 +21,23 @@ else
 	git pull
 	popd
 fi
+
+# Pull/Update any defined additional repository
+for R in $MMCI_ADDITIONAL_GITREPOS_LIST ; do
+	# TODO: We might want to support multiple branches too
+	RURL=$(echo $R | awk -F '@' '{print $1}')
+	RDIR=$"{DIR}/$(echo $R | awk -F '@' '{print $2}')"
+	log " Cloning updating $RURL (into $RDIR)"
+	# Check if we can actually reach it (otherwise, just skipt it)
+	git -c http.sslVerify=false ls-remote "$RURL" &> /dev/null || continue
+	if [[ -d $RDIR ]]; then
+		pushd $RDIR
+		git pull
+		popd
+	else
+		git clone "$RURL" "$RDIR"
+	fi
+done
 
 # TODO: Shall we update the OS here? Or just leave it to the testplan?
 

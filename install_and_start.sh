@@ -5,7 +5,7 @@ if [ $"$(id -u)" != "0" ]; then
 	exit 255
 fi
 
-DIR="/root"
+DIR="$HOME"
 if [ ! -d $DIR ]; then
 	echo "ERROR: we need $DIR, and it's not there"
 	exit 255

@@ -13,17 +13,13 @@ export -f popd
 ### Default values
 ## The values of these variables cannot be overriden by config files.
 ## Change them here if needed (which hopefully is not the case).
-##
-## About OS_RELEASE_FILE, it's indeed needed earlier than the config
-## files are parsed. If there are environments where the filename is
-## different than /etc/os-release, we can do some (simple) auto detection
-## of that here.
 export DIR="$HOME"
 export MMCI_DIR="${DIR}/mmtests-ci"
-export MMCI_LOGDIR="${DIR}/mmci-logs" ; mkdir -p "$MMCI_LOGDIR"
-export MMCI_OS_RELEASE_FILE="/etc/os-release"
 ## Values of variables below this point, can be overridden in config files.
 # Generic parameters. See setup_host_dirs() for some more.
+export MMCI_HOST_BASEDIR="$MMCI_DIR"
+export MMCI_LOGDIR="${DIR}/mmci-logs"
+export MMCI_OS_RELEASE_FILE="/etc/os-release"
 export MMCI_PAUSE_TIME=120
 # Package management (there's more later, after we've read the config files)
 # Syntax for repositories is:
@@ -84,6 +80,37 @@ export MMCI_BUILD_QEMU_REPO=https://gitlab.com/qemu-project/qemu.git
 export MMCI_BUILD_QEMU_VERSION="7.1.0" # Any version, git-SOME_HASH, git-latest
 export MMCI_BUILD_QEMU_INSTALL_PREFIX=""
 
+# XXX
+function read_configs() {
+	# FIXME: Turn this list of paths into something that makes sense!
+	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${DIR}/ci-config $MMCI_CONFIGS"
+	for C in $MMCI_CONFIGS ; do [[ -f "$C" ]] && . "$C" ; done
+}
+read_configs
+
+function setup_host_dirs() {
+	#local NAME=""
+	#local VERSION=""
+	local ROOT_PART=""
+
+	#NAME=$(echo $MMCI_OS_NAME | awk '{print $NF;}')
+	#[[ "$NAME" != "Tumbleweed" ]] && VERSION=$(echo $MMCI_OS_VERSION | tr -d '.')
+	ROOT_PART=$(mount | grep -E '\s/\s' | cut -f1 -d' ')
+	ROOT_PART=$(basename $ROOT_PART)
+
+	# XXX
+	#
+	# MMCI_RESULTS_DIR, we'll create it later, after having read the config
+	# files (just in case it's overridden).
+	export MMCI_HOSTPATH="$(hostname -s)/${ROOT_PART}"
+	export MMCI_HOSTDIR="${MMCI_HOST_BASEDIR}/${MMCI_HOSTPATH}"
+	export MMCI_RESULTS_DIR="${DIR}/mmci-results/${MMCI_HOSTPATH}"
+
+	# XXX
+	mkdir -p "$MMCI_LOGDIR"
+}
+setup_host_dirs
+
 function log() {
 	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
 }
@@ -116,37 +143,7 @@ function get_os_release() {
 		export MMCI_OS_VERSION_ID="$(cat $MMCI_OS_RELEASE_FILE | grep ^VERSION_ID= | cut -f2 -d'=')"
 	fi
 }
-
-function setup_host_dirs() {
-	local NAME=""
-	local VERSION=""
-	local ROOT_PART=""
-
-	NAME=$(echo $MMCI_OS_NAME | awk '{print $NF;}')
-	[[ "$NAME" != "Tumbleweed" ]] && VERSION=$(echo $MMCI_OS_VERSION | tr -d '.')
-	ROOT_PART=$(mount | grep -E '\s/\s' | cut -f1 -d' ')
-	ROOT_PART=$(basename $ROOT_PART)
-
-	# XXX
-	#
-	# MMCI_RESULTS_DIR, we'll create it later, after having read the config
-	# files (just in case it's overridden).
-	export MMCI_HOSTPATH="$(hostname -s)/${ROOT_PART}"
-	export MMCI_HOSTDIR="${MMCI_DIR}/${MMCI_HOSTPATH}"
-	export MMCI_RESULTS_DIR="${DIR}/mmci-results/${MMCI_HOSTPATH}"
-}
-
-# XXX
-function read_configs() {
-	# FIXME: Turn this list of paths into something that makes sense!
-	MMCI_CONFIGS="${MMCI_DIR}/ci-config ${MMCI_HOSTDIR}/ci-config ./ci-config $MMCI_CONFIGS"
-	for C in $MMCI_CONFIGS ; do [[ -f "$C" ]] && . "$C" ; done
-}
-
-# XXX
 get_os_release
-setup_host_dirs
-read_configs
 
 # XXX
 if [[ "$MMCI_PACKAGE_MANAGER" == "zypper" ]]; then
