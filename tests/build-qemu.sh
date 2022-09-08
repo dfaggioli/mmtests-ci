@@ -75,7 +75,7 @@ esac
 
 pushd "$MMCI_BUILD_QEMU_DIR"
 
-rm -rf qemu-*
+rm -rf qemu-${VER}
 mkdir -p qemu-${VER}/src qemu-${VER}/install
 cd "qemu-${VER}/src"
 
