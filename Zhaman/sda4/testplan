@@ -1,7 +1,7 @@
 START
 TEST upstream-qemu-7-0-0
-setup/setup-repos.sh default
-setup/build-qemu.sh --version 7.0.0
+setups/setup-repos.sh default
+setups/build-qemu.sh --version 7.0.0
 TEST official-rpms
 setups/setup-repos.sh --update default
 setups/install-rpms.sh --kvm-all
