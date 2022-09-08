@@ -53,6 +53,18 @@ function install() {
 	make install
 }
 
+if [[ -f ${MMCI_RESULTS_DIR}/${TESTNAME}/install_ok ]]; then
+	# We have a built succesfully at least once already.
+	# Did anything change?
+	${MMCI_DIR}/check_test.sh --testname "$TESTNAME"
+	if [[ $? -ne 0 ]] ; then
+		log "Skipping ${TESTNAME}: nothing changed since last run"
+		# Exiting with !0 should mean we skipp all the other steps
+		# for this test.
+		exit 2
+	fi
+fi
+
 case "$MMCI_PACKAGE_MANAGER" in
 	"zypper")
 		DEPS=$(cat ${MMCI_DIS}/setups/qemu-build-deps)
@@ -63,6 +75,7 @@ esac
 
 pushd "$MMCI_BUILD_QEMU_DIR"
 
+rm -rf qemu-*
 mkdir -p qemu-${VER}/src qemu-${VER}/install
 cd "qemu-${VER}/src"
 
@@ -82,16 +95,16 @@ case "$VER" in
 	*)
 esac
 
-configure 
-build
-install
+configure && build && touch ${MMCI_RESULTS_DIR}/${TESTNAME}/build_ok
+check && touch ${MMCI_RESULTS_DIR}/${TESTNAME}/check_ok
+install && touch ${MMCI_RESULTS_DIR}/${TESTNAME}/install_ok &&  "${MMCI_DIR}/_check_tmp_dir/*" "${MMCI_RESULTS_DIR}/${TESTNAME}/"
 
 cd .. ; cd ..
 pwd
 
 popd
 
-sleep 600
+sleep 300
 
 log "DONE build-qemu.sh"
 exit 0
