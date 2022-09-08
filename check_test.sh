@@ -40,8 +40,8 @@ function check_rpms() {
 	fi
 }
 
+mkdir -p ${MMCI_DIR}/_check_tmp_dir
 case "$TNAME" in
-	mkdir -p ${MMCI_DIR}/_check_tmp_dir
 	"official-rpms" | "devel-virt-rpms" | "build-qemu-*-*-0")
 		check_rpms
 		;;
