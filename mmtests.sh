@@ -74,6 +74,7 @@ for H in $HOST_CONFIGS ; do
 		if [[ $? -eq 0 ]]; then
 			cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
 			mv "${MMCI_DIR}/_check_tmp_dir/*" "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
+			rm -rf work*
 		fi
 	done
 done

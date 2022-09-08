@@ -78,6 +78,11 @@ export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
 export MMCI_MMTESTS_BRANCH=master
 export MMCI_MMTESTS_DIR="${DIR}/mmtests"
 export MMCI_MMTESTS_FORCE_MONITORS="no"
+# Stuff specific to tests
+export MMCI_BUILD_QEMU_DIR="${DIR}/qemu"
+export MMCI_BUILD_QEMU_REPO=https://gitlab.com/qemu-project/qemu.git
+export MMCI_BUILD_QEMU_VERSION="7.1.0" # Any version, git-SOME_HASH, git-latest
+export MMCI_BUILD_QEMU_INSTALL_PREFIX=""
 
 function log() {
 	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
