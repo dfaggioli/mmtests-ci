@@ -19,6 +19,8 @@ while true ; do
 	elif [[ "$1" == "--check" ]]; then
 		CHECK="yes"
 		shift
+	else
+		break
 	fi
 done
 [[ "$PREFIX" ]] || PREFIX="${MMCI_BUILD_QEMU_DIR}/qemu-${VER}/install"
