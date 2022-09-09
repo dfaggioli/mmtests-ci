@@ -31,7 +31,7 @@ TimeoutStartSec=0
 WantedBy=default.target
 EOF
 
-cp ${DIR}/mmci.service /etc/systemd/system/
+mv ${DIR}/mmci.service /etc/systemd/system/
 systemctl daemon-reload
 # BEWARE: this will reboot the box and start the CI cycling!!!
 #systemctl enable --now mmci
