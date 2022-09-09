@@ -82,7 +82,7 @@ for H in $HOST_CONFIGS ; do
 		if [[ $? -eq 0 ]]; then
 			cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
 			${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP" --success
-			[[ $? -eq 0 ]] || fail "Something went very wrong when checking results..."
+			[[ $? -ne 0 ]] && fail "Something went very wrong when checking results..."
 			rm -rf work*
 		fi
 	done
