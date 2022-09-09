@@ -105,8 +105,10 @@ function read_configs() {
 }
 read_configs
 
+# FIXME: Switch to a "more elegant" way of writing to both console and logfile
 function log() {
-	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
+	LOG="$(date +\"%D-%T): $(realpath $0): $@"
+	echo "$LOG" ; echo "$LOG" >> ${MMCI_LOGDIR}/steps.log
 }
 export -f log
 
