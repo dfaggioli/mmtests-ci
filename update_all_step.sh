@@ -57,6 +57,7 @@ for R in $MMCI_ADDITIONAL_GITREPOS_LIST ; do
 		[[ $? -eq 0 ]] || log "WARNING: cannot clone git repo $RDIR. Trying to continue..."
 	else
 		pushd $RDIR
+		log "Updating $RURL in $(pwd)"
 		git remote update && git pull
 		if [[ $? -ne 0 ]]; then
 			log "**************************** W A R N I N G ****************************"

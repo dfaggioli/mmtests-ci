@@ -52,7 +52,7 @@ function check_rpms() {
 
 mkdir -p "$TMPDIR"
 case "$TNAME" in
-	"official-rpms" | "devel-virt-rpms" | "build-qemu-*-*-0")
+	"official-rpms" | "devel-virt-rpms" | "qemu-*-*-0")
 		check_rpms
 		;;
 esac

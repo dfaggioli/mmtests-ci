@@ -27,8 +27,13 @@ export MMCI_HOST_BASEDIR="$MMCI_DIR"
 ROOT_PART=$(mount | grep -E '\s/\s' | cut -f1 -d' ')
 export ROOT_PART=$(basename $ROOT_PART)
 export MMCI_HOSTPATH="$(hostname -s)/${ROOT_PART}"
-export MMCI_HOSTDIR="${MMCI_HOST_BASEDIR}/${MMCI_HOSTPATH}"
+# We'd now define MMCI_HOSTDIR to $MMCI_HOST_BASEDIR/$MMCI_HOSTPATH, but
+# let's let's defer that to when we'll have read the config files, in case
+# they override $MMCI_HOST_BASEDIR
 export MMCI_RESULTS_BASEDIR="${DIR}/mmci-results"
+# And the same for actual results dirs, that will be subdirs of
+# MMCI_RESULTS_BASEDIR (they are, however, defined somewhere else, closer
+# to where they're used.
 export MMCI_LOGDIR="${DIR}/mmci-logs"
 export MMCI_OS_RELEASE_FILE="/etc/os-release"
 export MMCI_TERM_FILE="${DIR}/mmci_term"
@@ -104,6 +109,7 @@ function read_configs() {
 	for C in $MMCI_CONFIGS ; do [[ -f "$C" ]] && . "$C" ; done
 }
 read_configs
+export MMCI_HOSTDIR="${MMCI_HOST_BASEDIR}/${MMCI_HOSTPATH}"
 
 # FIXME: Switch to a "more elegant" way of writing to both console and logfile
 function log() {
