@@ -24,7 +24,7 @@ while read -r -u 3 LINE; do
 	[[ $L -le $LASTLINE ]] && continue
 	#CMD="$(echo ${LINE} | awk '{print $1;}')"
 	CMD="$(echo "$LINE" | cut -f1 -d' ')"
-	if  ! -f "${MMCI_DIR}/${CMD}" ; then
+	if  [[ ! -f "${MMCI_DIR}/${CMD}" ]]; then
 		log "WARNING: script ${MMCI_DIR}/${CMD} is missing. Trying to continue..."
 	else
 		log "About to run: $LINE"
