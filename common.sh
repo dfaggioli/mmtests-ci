@@ -10,17 +10,31 @@ popd () {
 }
 export -f popd
 
-### Default values
-## The values of these variables cannot be overriden by config files.
-## Change them here if needed (which hopefully is not the case).
-export DIR="$HOME"
-export MMCI_DIR="${DIR}/mmtests-ci"
-## Values of variables below this point, can be overridden in config files.
+## Default values of some variables. They all can be overridden, just by
+## having them defined in config files.
+##
+## Note that we rely on $DIR and $MMCI_DIR to be defined already. This happens
+## in mmci_step.sh, before including this file, but can also be done by
+## defining (and exporting them to the environment!) outside of any script (as
+## mmci_step.sh does check if they're there already).
+##
+## Default values (go check them in mmci_step.sh) are:
+## - DIR=$HOME
+## - MMCI_DIR=${DIR}/mmtests-ci
+
 # Generic parameters. See setup_host_dirs() for some more.
 export MMCI_HOST_BASEDIR="$MMCI_DIR"
+ROOT_PART=$(mount | grep -E '\s/\s' | cut -f1 -d' ')
+export ROOT_PART=$(basename $ROOT_PART)
+export MMCI_HOSTPATH="$(hostname -s)/${ROOT_PART}"
+export MMCI_HOSTDIR="${MMCI_HOST_BASEDIR}/${MMCI_HOSTPATH}"
+export MMCI_RESULTS_BASEDIR="${DIR}/mmci-results"
 export MMCI_LOGDIR="${DIR}/mmci-logs"
 export MMCI_OS_RELEASE_FILE="/etc/os-release"
+export MMCI_TERM_FILE="${DIR}/mmci_term"
+export MMCI_PAUSE_FILE="${DIR}/mmci_pause"
 export MMCI_PAUSE_TIME=120
+
 # Package management (there's more later, after we've read the config files)
 # Syntax for repositories is:
 # - one line for each repository
@@ -57,28 +71,31 @@ repo-update@http://download.opensuse.org/update/leap/15.2/oss/
 repo-non-oss@http://download.opensuse.org/distribution/leap/15.2/repo/non-oss/
 repo-update-non-oss@http://download.opensuse.org/update/leap/15.2/non-oss/
 "
-# TODO: Move to internal?
-#if [ -z "$SLES15SP2_REPOS" ]; then
-#	export SLES15SP2_REPOS="
+# FIXME: Move to an additional git repo!
+#export MMCI_PACKAGE_REPOS_SLES15SP2="
 #server-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SERVER/12-SP5/x86_64/product
 #server-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SERVER/12-SP5/x86_64/update
 #sdk-product@http://ibs-mirror.prv.suse.net/ibs/SUSE/Products/SLE-SDK/12-SP5/x86_64/product
 #sdk-update@http://ibs-mirror.prv.suse.net/ibs/SUSE/Updates/SLE-SDK/12-SP5/x86_64/update
+#virt-devel@http://download.suse.de/ibs/Devel:/Virt:/SLE-12-SP5/SUSE_SLE-12-SP5_Update_standard
 #"
-##virt-devel@http://download.suse.de/ibs/Devel:/Virt:/SLE-12-SP5/SUSE_SLE-12-SP5_Update_standard
-#fi
+
 # Other OS and services names and stuff
 export MMCI_LIBVIRTD_SERVICE_NAME="libvirtd"
+
 # MMTests related values
 export MMCI_MMTESTS_REPO=https://github.com/gormanm/mmtests.git
 export MMCI_MMTESTS_BRANCH=master
 export MMCI_MMTESTS_DIR="${DIR}/mmtests"
 export MMCI_MMTESTS_FORCE_MONITORS="no"
+
 # Stuff specific to tests
 export MMCI_BUILD_QEMU_DIR="${DIR}/qemu"
-export MMCI_BUILD_QEMU_REPO=https://gitlab.com/qemu-project/qemu.git
+export MMCI_BUILD_QEMU_URL_BASE="https://download.qemu.org/"
+export MMCI_BUILD_QEMU_REPO="https://gitlab.com/qemu-project/qemu.git"
+export MMCI_BUILD_QEMU_BRANCH="master"
 export MMCI_BUILD_QEMU_VERSION="7.1.0" # Any version, git-SOME_HASH, git-latest
-export MMCI_BUILD_QEMU_INSTALL_PREFIX=""
+export MMCI_BUILD_QEMU_MAKE_CHECK="no"
 
 # XXX
 function read_configs() {
@@ -87,29 +104,6 @@ function read_configs() {
 	for C in $MMCI_CONFIGS ; do [[ -f "$C" ]] && . "$C" ; done
 }
 read_configs
-
-function setup_host_dirs() {
-	#local NAME=""
-	#local VERSION=""
-	local ROOT_PART=""
-
-	#NAME=$(echo $MMCI_OS_NAME | awk '{print $NF;}')
-	#[[ "$NAME" != "Tumbleweed" ]] && VERSION=$(echo $MMCI_OS_VERSION | tr -d '.')
-	ROOT_PART=$(mount | grep -E '\s/\s' | cut -f1 -d' ')
-	ROOT_PART=$(basename $ROOT_PART)
-
-	# XXX
-	#
-	# MMCI_RESULTS_DIR, we'll create it later, after having read the config
-	# files (just in case it's overridden).
-	export MMCI_HOSTPATH="$(hostname -s)/${ROOT_PART}"
-	export MMCI_HOSTDIR="${MMCI_HOST_BASEDIR}/${MMCI_HOSTPATH}"
-	export MMCI_RESULTS_DIR="${DIR}/mmci-results/${MMCI_HOSTPATH}"
-
-	# XXX
-	mkdir -p "$MMCI_LOGDIR"
-}
-setup_host_dirs
 
 function log() {
 	echo "$(date +\"%D-%T): $(realpath $0): $@" >> ${MMCI_LOGDIR}/steps.log
@@ -126,6 +120,9 @@ function fail() {
 }
 export -f fail
 
+# FIXME: Do we need to check if MMCI_OS_NAME, MMCI_OS_ID, etc are there,
+#        maybe from config, before reading them? MMmm... not sure. What would
+#        be the point, and the use case, of overriding these?
 function get_os_name() {
 	export MMCI_OS_NAME="$(cat $MMCI_OS_RELEASE_FILE | grep ^NAME | cut -f2 -d'=' | tr -d '"')"
 }

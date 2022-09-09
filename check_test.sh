@@ -11,6 +11,7 @@
 
 TNAME="test"
 TGROUP="default"
+TMPDIR="${MMCI_DIR}/tmp_check_test_dir"
 CHECK="go"
 
 while true ; do
@@ -20,14 +21,22 @@ while true ; do
 	elif [[ "$1" == "--testgroup" ]]; then
 		TGROUP="$2"
 		shift 2
+	elif [[ "$1" == "--success" ]]; then
+		if [[ ! -d "$TMPDIR" ]] || [[ $(ls "$TMPDIR" | wc -l) -eq 0 ]]; then
+			fail "Called with '--success' but nothing in $TMPDIR. That is wrong!"
+		fi
+		mv  "${TMPDIR}/*" "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
+		rmdir "$TMPDIR"
+		exit 0
 	else
 		break
 	fi
 done
 
 function check_rpms() {
-	local RPMLIST="${MMCI_DIR}/_check_tmp_dir/rpm-packages.txt"
+	local RPMLIST="${TMPDIR}/rpm-packages.txt"
 	local LATEST_RPMLIST="${MMCI_RESULTS_DIR}/${TNAME}/${TGROUP}/rpm-packages.txt"
+
 
 	[[ -f "$LATEST_RPMLIST" ]] || touch "$LATEST_RPMLIST"
 	rpm -qa | sort > "$RPMLIST"
@@ -40,7 +49,7 @@ function check_rpms() {
 	fi
 }
 
-mkdir -p ${MMCI_DIR}/_check_tmp_dir
+mkdir -p "$TMPDIR"
 case "$TNAME" in
 	"official-rpms" | "devel-virt-rpms" | "build-qemu-*-*-0")
 		check_rpms

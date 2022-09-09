@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 #
 # Setup the repositories and (optionally) updates the OS.
 #
