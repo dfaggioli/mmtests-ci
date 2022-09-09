@@ -2,12 +2,12 @@ START
 TEST qemu-7-0-0
 setups/setup-repos.sh --update default
 tests/build-qemu.sh --version 7.0.0
-#TEST official-rpms
-#setups/setup-repos.sh --update default
-#setups/install-rpms.sh --kvm-all
-#tests/baremetal.sh
+TEST official-rpms
+setups/setup-repos.sh --update default
+setups/install-rpms.sh --kvm-all
+tests/baremetal.sh
 ##tests/single-vm.sh
-#tests/multi-vms.sh
+tests/multi-vms.sh
 #TEST devel-virt-rpms
 #setups/setup-repos.sh --update default virt-devel
 ## The next step should not be necessary, but for now let's do it...
