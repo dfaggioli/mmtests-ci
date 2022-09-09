@@ -59,5 +59,18 @@ case "$TNAME" in
 		;;
 esac
 
+log "Test $TNAME is: \"$CHECK\""
+
+if [[ -f "${MMCI_HOSTDIR}/forcetests" ]] && grep -q -E "^${TNAME}$" "${MMCI_HOSTDIR}/forcetests" ; then
+	[[ "$CHECK" == "no" ]] && log "Forcing $TNAME to \"go\""
+	CHECK="go"
+fi
+if [[ -f "${MMCI_HOSTDIR}/forcetests_once" ]] && grep -q -E "^${TNAME}$" "${MMCI_HOSTDIR}/forcetests_once" ; then
+	[[ "$CHECK" == "no" ]] && log "Forcing $TNAME to \"go\", but just for this one time"
+	sed -i -n '/^'"${TNAME}"'$/!p' "${MMCI_HOSTDIR}/forcetests_once"
+	CHECK="go"
+
+fi
+
 [[ "$CHECK" == "go" ]] && exit 0
 rm -rf "$TMPDIR" ; exit 1
