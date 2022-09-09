@@ -2,6 +2,8 @@
 
 [[ ! "$DIR" ]] && export DIR="$HOME"
 [[ ! "$MMCI_DIR" ]] && export MMCI_DIR="${DIR}/mmtests-ci"
+[[ ! "$MMCI_GIT_REPO" ]] && export MMCI_GIT_REPO="https://github.com/dfaggioli/mmtests-ci.git"
+[[ ! "$MMCI_GIT_BRANCH" ]] && export MMCI_GIT_BRANCH="main"
 
 if [[ ! -d "$MMCI_DIR" ]]; then
 	# Apparently, this is the very first time we run here! Let's try to
@@ -11,8 +13,6 @@ if [[ ! -d "$MMCI_DIR" ]]; then
 		echo "ERROR: First run on this host, we need git to clone the repo. Cannot continue!"
 		exit 1
 	fi
-	[[ ! "$MMCI_GIT_REPO" ]] && export MMCI_GIT_REPO="https://github.com/dfaggioli/mmtests-ci.git"
-	[[ ! "$MMCI_GIT_BRANCH" ]] && export MMCI_GIT_BRANCH="main"
 	git clone --single-branch --branch "$MMCI_GIT_BRANCH" "$MMCI_GIT_REPO" "$MMCI_DIR" &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		echo "ERROR: cloning ${MMCI_GIT_REPO}/${MMCI_GIT_BRANCH} failed. Cannot continue!"

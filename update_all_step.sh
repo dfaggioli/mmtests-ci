@@ -4,12 +4,6 @@
 
 log "STARTING update_all_step.sh"
 
-# Just some common stuff, that we know it's needed (and that it's
-# likely there already, but still...).
-$MMCI_PACKAGES_INSTALL git wget curl
-# At least git, we need it right away!
-command -v git &> /dev/null || fail "git not present (and cannot install it). Giving up"
-
 # Make sure the mmtests-ci repo is always updated
 log "Updating the mmtests-ci repository"
 cd $MMCI_DIR || fail "Cannot enter mmtests-ci main dir ($MMCI_DIR)"
