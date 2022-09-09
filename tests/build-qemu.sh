@@ -126,6 +126,6 @@ ${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP" --succ
 [[ $? -ne 0 ]] && fail "Something went very wrong when checking results..."
 
 # FIXME: Only for debugging!
-sleep 300
+sleep 180
 
 exit 0
