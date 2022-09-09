@@ -102,7 +102,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Check
-if [[ "$MMCI_BUILD_QEMU_MAKE_CHECK" != "yes" ]] && return
+if [[ "$MMCI_BUILD_QEMU_MAKE_CHECK" != "yes" ]]; then
 	make check V=1 VERBOSE=1
 	# TODO: Make a switch for making make-check failures fatal
 	[[ $? -ne 0 ]] && log "WARNING: Build checks failed for QEMU $VER during test $TESTNAME"
