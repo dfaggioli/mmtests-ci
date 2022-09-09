@@ -25,7 +25,7 @@ while true ; do
 		if [[ ! -d "$TMPDIR" ]] || [[ $(ls "$TMPDIR" | wc -l) -eq 0 ]]; then
 			log "WARNING: Called with '--success' but nothing in $TMPDIR. That is wrong!"
 		fi
-		mv  "${TMPDIR}/*" "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
+		mv  "${TMPDIR}"/* "${MMCI_RESULTS_DIR}/${TNAME}/${TGROUP}"
 		rmdir "$TMPDIR"
 		exit 0
 	else
@@ -51,6 +51,8 @@ function check_rpms() {
 }
 
 mkdir -p "$TMPDIR"
+mkdir -p "${MMCI_RESULTS_DIR}/${TNAME}/${TGROUP}"
+
 case "$TNAME" in
 	official-rpms | devel-virt-rpms | qemu-?-?-?)
 		check_rpms

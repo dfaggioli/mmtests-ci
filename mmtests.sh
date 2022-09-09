@@ -27,7 +27,6 @@ done
 TESTGROUP=$(cat /proc/${PPID}/comm)
 TESTGROUP=$(basename $TESTGROUP)
 TESTGROUP=$(echo $TESTGROUP | cut -f1 -d'.')
-mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
 
 ${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP"
 if [[ $? -ne 0 ]] ; then
