@@ -32,7 +32,9 @@ mkdir -p "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
 ${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP"
 if [[ $? -ne 0 ]] ; then
 	log "Skipping ${TESTNAME}: nothing changed since last run"
-	exit 0
+	# Exiting with !0 should mean we skipp all the other steps
+	# for this test.
+	exit 2
 fi
 
 prepare_mmtests
@@ -47,7 +49,10 @@ for H in $HOST_CONFIGS ; do
 			HC_STR=""
 		else
 			HC=$(fetch_mmtests_config -h $HCONFIG)
-			[[ $HC ]] || fail "Cannot find the host config file $HCONFIG for the configuration $HCONF"
+			if [[ ! "$HC" ]]; then
+				log "Cannot find the host config file $HCONFIG for the configuration $HCONF. Skipping"
+				continue
+			fi
 
 			start_libvirtd
 			BIN="run-kvm"
@@ -62,18 +67,22 @@ for H in $HOST_CONFIGS ; do
 		TEST=$(echo $T | awk -F '@' '{print $1}')
 		TCONFIG=$(echo $T | awk -F '@' '{print $2}')
 		TC=$(fetch_mmtests_config $TCONFIG)
-		[[ $TC ]] || fail "Cannot find the config file $TCONFIG for the test $TEST"
+		if [[ ! "$TC" ]]; then
+		       log "Cannot find the config file $TCONFIG for the test $TEST. Skipping"
+		       continue
+		fi
 		cp "$TC" "${MMCI_MMTESTS_DIR}/mmtests-config"
 
 		# Run the test
 		TESTID="${TEST}_${HCONF}_$(date +%Y%m%d-%H%M)"
 		rm -rf work/log
-		bash -x ./${BIN}.sh $MONITOR $HC_STR -c mmtests-config $TESTID
+		./${BIN}.sh $MONITOR $HC_STR -c mmtests-config $TESTID
 
 		# Save the results
 		if [[ $? -eq 0 ]]; then
 			cp -a ./work/log/* "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
-			mv "${MMCI_DIR}/_check_tmp_dir/*" "${MMCI_RESULTS_DIR}/${TESTNAME}/$TESTGROUP/"
+			${MMCI_DIR}/check_test.sh --testname "$TESTNAME" --testgroup "$TESTGROUP" --success
+			[[ $? -eq 0 ]] || fail "Something went very wrong when checking results..."
 			rm -rf work*
 		fi
 	done

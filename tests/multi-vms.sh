@@ -6,15 +6,17 @@
 
 log "STARTING tests/multi-vms.sh (args: $@)"
 
-echo "XXX $0"
-
-#XXX
-# XXX for baremetal run, e.g. "baremetal@-"
+# TODO: For now, just name one that we're fairly sure it will be among
+#       the ones that are auto-generated. In reallity, we want to pick
+#       a meaningful subset, maybe depending on the host characteristics,
+#       and/or maybe even using special/handcrafted ones (after having
+#       copied them in place)
 export HOST_CONFIGS="
-2vm4vcpu4ram@config-2vm-4vcpu-4ram
+2vms4vcpus4ram@config-2vm-4vcpu-4ram
+8vms8vcpus24ram@config-8vm-8vcpu-24ram
 "
 
-# XXX
+# TODO: See above (HOST_CONFIGS)
 export TESTS="
 stream-default@config
 "

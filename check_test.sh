@@ -23,7 +23,7 @@ while true ; do
 		shift 2
 	elif [[ "$1" == "--success" ]]; then
 		if [[ ! -d "$TMPDIR" ]] || [[ $(ls "$TMPDIR" | wc -l) -eq 0 ]]; then
-			fail "Called with '--success' but nothing in $TMPDIR. That is wrong!"
+			log "WARNING: Called with '--success' but nothing in $TMPDIR. That is wrong!"
 		fi
 		mv  "${TMPDIR}/*" "${MMCI_RESULTS_DIR}/${TESTNAME}/${TESTGROUP}"
 		rmdir "$TMPDIR"
@@ -43,6 +43,7 @@ function check_rpms() {
 
 	if diff "$LATEST_RPMLIST" "$RPMLIST" ; then
 		# They look the same, no need to do anything!
+		touch "$LATEST_RPMLIST"
 		CHECK="no-go"
 	else
 		CHECK="go"
@@ -57,4 +58,4 @@ case "$TNAME" in
 esac
 
 [[ "$CHECK" == "go" ]] && exit 0
-exit 1
+rm -rf "$TMPDIR" ; exit 1
