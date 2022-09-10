@@ -260,6 +260,7 @@ function start_libvirtd() {
 export -f start_libvirtd
 
 function prepare_mmtests() {
+	touch "${HOME}/.mmtests-auto-package-install"
 	pushd $MMCI_MMTESTS_DIR || fail "Cannot reach MMTests directory"
 	./bin/generate-generic-configs
 	./bin/generate-nas.sh
