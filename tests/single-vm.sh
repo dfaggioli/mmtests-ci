@@ -13,7 +13,7 @@ log "STARTING tests/single-vms.sh (args: $@)"
 #       copied them in place)
 export HOST_CONFIGS="
 1vm1vcpus4ram@config-1vm-1vcpu-4ram
-1vm8vcpus10ram/config-1vm-8vcpu-10ram
+1vm8vcpus10ram@config-1vm-8vcpu-10ram
 "
 
 # TODO: See above (HOST_CONFIGS)
