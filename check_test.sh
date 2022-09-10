@@ -61,15 +61,20 @@ esac
 
 log "Test $TNAME is: \"$CHECK\""
 
-if [[ -f "${MMCI_HOSTDIR}/forcetests" ]] && grep -q -E "^${TNAME}$" "${MMCI_HOSTDIR}/forcetests" ; then
-	[[ "$CHECK" == "no" ]] && log "Forcing $TNAME to \"go\""
-	CHECK="go"
-fi
-if [[ -f "${MMCI_HOSTDIR}/forcetests_once" ]] && grep -q -E "^${TNAME}$" "${MMCI_HOSTDIR}/forcetests_once" ; then
-	[[ "$CHECK" == "no" ]] && log "Forcing $TNAME to \"go\", but just for this one time"
-	sed -i -n '/^'"${TNAME}"'$/!p' "${MMCI_HOSTDIR}/forcetests_once"
-	CHECK="go"
-
+if [[ "$CHECK" == "no-go" ]]; then
+	if [[ -f "${MMCI_HOSTDIR}/forcetests" ]]; then
+		if grep -q -E "^${TNAME}$" "${MMCI_HOSTDIR}/forcetests" ; then
+			log "Forcing $TNAME to \"go\""
+			CHECK="go"
+		fi
+	fi
+	if [[ -f "${MMCI_HOSTDIR}/forcetests_once" ]]; then
+		if grep -q -E "^${TNAME}$" "${MMCI_HOSTDIR}/forcetests_once" ; then
+			log "Forcing $TNAME to \"go\", but just for this one time"
+			sed -i -n '/^'"${TNAME}"'$/!p' "${MMCI_HOSTDIR}/forcetests_once"
+			CHECK="go"
+		fi
+	fi
 fi
 
 [[ "$CHECK" == "go" ]] && exit 0
